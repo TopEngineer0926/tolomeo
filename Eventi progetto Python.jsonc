@@ -1,0 +1,48 @@
+{
+    "type": "FirstScrape",
+    "payload": {
+        "uuid": "e65ba957-7247-4591-b54f-150804259391",
+        "sourceType": "website",
+        // "sourceType": "telegram",
+        "start": null,
+        "parent": null,
+        "step": "0",
+        "cycle": "12",
+        "keywords": ["revenge", "drugs"],
+        //"body": "Cosa mi serve salvare nel corpo? mi serve?",
+        "urls": [
+            "www.no.it",
+            "www.si.it"
+        ],
+        //"source": "channel: TuttiPazzi"
+        "source": "website: tuttipazzi.it"
+    },
+    "correlationIds": {
+        "start.uuid": "c3721138-c37e-4af2-98c7-50bbbfca69eb",
+        "parent.uuid": "4aff65a1-f07e-4c78-b06f-724cf8dba300"
+    }
+}
+
+
+// {
+//     "type": "StepScraped",
+//     "payload": {
+//         "uuid": "e65ba957-7247-4591-b54f-150804259391",
+//         "sourceType": "website",
+//         "start": {"sourceType": "telegram", "uuid": "c3721138-c37e-4af2-98c7-50bbbfca69eb"},
+//         "parent": { "sourceType": "website", "uuid": "4aff65a1-f07e-4c78-b06f-724cf8dba300"},
+//         "step": "4",
+//         "words": ["revenge", "drugs"],
+//         //"body": "Cosa mi serve salvare nel corpo? mi serve?",
+//         "urls": [
+//             "www.no.it",
+//             "www.si.it"
+//         ],
+//         "source": "channel: TuttiPazzi"
+//         // "source": "website: tuttipazzi.it"
+//     },
+//     "correlationIds": {
+//         "start.uuid": "c3721138-c37e-4af2-98c7-50bbbfca69eb",
+//         "parent.uuid": "4aff65a1-f07e-4c78-b06f-724cf8dba300"
+//     }
+// }
