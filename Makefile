@@ -1,4 +1,4 @@
-@phony: up down shell-mongo shell
+@phony: up down shell-mongo shell dump-init
 
 help: ## show this help
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
@@ -24,3 +24,6 @@ test: build ## This will run tests in docker, rebuild image if new or missing
 
 restart: ## This will reload containers
 	@docker-compose pull && docker-compose restart
+
+dump-init: ## This will dump database schema and save the new initdb.sql
+	@docker exec postgres pg_dump --username=admin_dip --no-password --dbname=dipdb > ./database/init.sql
