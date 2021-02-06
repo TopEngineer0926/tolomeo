@@ -1,6 +1,6 @@
-from code.app.repository import Repository
-from code.app.repository.mongo import MongoRepository
-from code.app.scraper.schema import UserSchema
+from app.repository import Repository
+from app.repository.mongo import MongoRepository
+from app.scraper.schema import UserSchema
 import uuid
 
 class Service(object):

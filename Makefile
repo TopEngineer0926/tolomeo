@@ -1,4 +1,4 @@
-@phony: up down shell-mongo shell dump-init
+@phony: up down shell-mongo shell dump-init test-integration test
 
 help: ## show this help
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
@@ -19,8 +19,10 @@ shell-mongo: ## Enter the mongodb container, access to mongodb with 'mongo -u ro
 shell: ## Enter the backend container python
 	@docker exec -it backend bash
 
-test: build ## This will run tests in docker, rebuild image if new or missing
-	@docker run backend python3 -m unittest discover
+test: test-integration
+
+test-integration: ## This will run tests in docker, rebuild image if new or missing
+	@docker-compose exec web pytest tests/integration/tests.py
 
 restart: ## This will reload containers
 	@docker-compose pull && docker-compose restart

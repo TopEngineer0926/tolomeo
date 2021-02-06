@@ -9,7 +9,7 @@ class MongoRepository(object):
     def __init__(self):
         #mongo_url = os.environ.get('MONGO_URL')
         self.db = MongoClient(
-                host = [ str(DOMAIN) + ":" + str(PORT) ],
+                host = "mongodb://mongodb",
                 serverSelectionTimeoutMS = 3000, # 3 second timeout
                 username = "root",
                 password = "secret",

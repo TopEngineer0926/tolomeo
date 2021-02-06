@@ -1,7 +1,7 @@
-from code.app.scraper.schema import UserSchema
+from app.scraper.schema import UserSchema
 from flask import Flask, json, g, request
 from pymongo import MongoClient, errors
-from code.app.scraper.service import Service
+from app.scraper.service import Service
 from flask_cors import CORS
 
 app = Flask(__name__)
