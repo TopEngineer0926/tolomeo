@@ -22,7 +22,7 @@ shell: ## Enter the backend container python
 test: test-integration
 
 test-integration: ## This will run tests in docker, rebuild image if new or missing
-	@docker-compose exec web pytest tests/integration/tests.py
+	@docker-compose exec web pytest --capture=tee-sys tests/integration/tests.py
 
 restart: ## This will reload containers
 	@docker-compose pull && docker-compose restart

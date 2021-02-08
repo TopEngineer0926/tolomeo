@@ -19,3 +19,6 @@ class Repository(object):
   
   def delete(self, selector):
     return self.client.delete(selector)
+  
+  def version(self):
+    return self.client.version()
