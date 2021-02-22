@@ -4,3 +4,8 @@ flask_cors
 pymongo
 pytest
 requests
+selenium
+stem
+bs4
+psycopg2
+PySocks

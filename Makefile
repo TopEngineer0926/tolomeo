@@ -29,3 +29,6 @@ restart: ## This will reload containers
 
 dump-init: ## This will dump database schema and save the new initdb.sql
 	@docker exec postgres pg_dump --username=admin_dip --no-password --dbname=dipdb > ./database/init.sql
+
+clean-images: ## This will clean all unused docker images not used by current containes
+	@docker image prune -a --force

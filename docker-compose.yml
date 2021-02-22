@@ -1,5 +1,12 @@
 version: "3"
 services:
+  proxy:
+    container_name: "proxy"
+    image: "proxy"
+    build: "./proxy"
+    networks: 
+      - default
+
   web:
     container_name: "backend"
     image: "backend"
@@ -45,4 +52,14 @@ services:
     ports:
       - 5439:5432
     networks: 
+      - default
+    
+  firefox-driver:
+    container_name: "firefox-driver"
+    image: selenium/standalone-firefox:85.0
+    volumes:
+      - /dev/shm:/dev/shm
+    ports:
+      - 4444:4444
+    networks:
       - default
