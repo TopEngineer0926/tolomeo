@@ -57,6 +57,23 @@ services:
   firefox-driver:
     container_name: "firefox-driver"
     image: selenium/standalone-firefox:85.0
+    environment: 
+      - https_proxy=socks5://proxy:9050
+      - HTTPS_PROXY=socks5://proxy:9050
+      - http_proxy=socks5://proxy:9050
+      - HTTP_PROXY=socks5://proxy:9050
+      - no_proxy=
+      - NO_PROXY=
+    volumes:
+      - /dev/shm:/dev/shm
+    ports:
+      - 4455:4455
+    networks:
+      - default
+
+  chrome-driver:
+    container_name: "chrome-driver"
+    image: selenium/standalone-chrome:88.0
     volumes:
       - /dev/shm:/dev/shm
     ports:
