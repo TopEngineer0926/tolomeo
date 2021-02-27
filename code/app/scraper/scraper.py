@@ -14,6 +14,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.common.proxy import Proxy, ProxyType
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 
 
 
@@ -28,72 +29,31 @@ proxies = {
 }
 
 
-def test_ip_change_requests():
-    logging.info('-----------------Using requests-----------------')
-    url = "https://icanhazip.com/" 
-    headers = {
-        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
-    }
-    
+def scrape(url):
+    logging.info('-----------------Begin Scrape-----------------') 
+
     change_ip()
-    response = requests.get(url, proxies=proxies, headers=headers)
-    print_ip(response.text)
-    old_ip = response.text
-    new_ip = old_ip
-
-    seconds = 0
-    while old_ip == new_ip:
-        seconds = seconds + 2
-        change_ip()
-        time.sleep(2)
-        response = requests.get(url, proxies=proxies, headers=headers)
-        print_ip(response.text)
-        new_ip = response.text
-    print_ip(new_ip + ' cambiato in secondi:' + str(seconds))
-    logging.info('-----------------Closing requests-----------------')
-
-def test_ip_change_firefox():
-    logging.info('-----------------Using firefox-----------------')
-    url = "https://icanhazip.com/" 
+    web_driver = remote_web_driver_chrome(url)
+    web_driver.get(url)
     
-    change_ip()
-    response = remote_web_driver(url)
-    print_ip(response)
-    old_ip = response
-    new_ip = old_ip
-
-    seconds = 0
-    while old_ip == new_ip:
-        seconds = seconds + 2
+    category_links = {x: get_link_by_text(web_driver, x)
+                for x in get_list_by_tag_name(web_driver, 'a')}
+    web_driver.quit()
+    for x in list(category_links)[0:1]:
+        logging.info(x)
+        logging.info(category_links[x])
+        new_url = category_links[x]
         change_ip()
-        time.sleep(2)
-        response = remote_web_driver(url)
-        print_ip(response)
-        new_ip = response
-    print_ip(new_ip + ' cambiato in secondi:' + str(seconds))
-    logging.info('-----------------Closing firefox-----------------')
-
-def test_ip_change_chrome():
-    logging.info('-----------------Using Chrome-----------------')
-    url = "https://icanhazip.com/" 
-    
-    change_ip()
-    response = remote_web_driver_chrome(url)
-    print_ip(response)
-    old_ip = response
-    new_ip = old_ip
-
-    seconds = 0
-    while old_ip == new_ip:
-        seconds = seconds + 2
-        change_ip()
-        time.sleep(2)
-        response = remote_web_driver_chrome(url)
-        print_ip(response)
-        new_ip = response
-    print_ip(new_ip + ' cambiato in secondi:' + str(seconds))
-    logging.info('-----------------Closing Chrome-----------------')
-
+        time.sleep(3)
+        web_driver = remote_web_driver_chrome(new_url)
+        web_driver.get(url)
+        category_links = {x: get_link_by_text(web_driver, x)
+                for x in get_list_by_tag_name(web_driver, 'a')}
+        for x in list(category_links)[0:3]:
+            logging.info(x)
+            logging.info(category_links[x])
+        web_driver.quit()
+    logging.info('-----------------End Scrape-----------------')
 
 def print_ip(html):
     soup = BeautifulSoup(html, 'html.parser')
@@ -107,45 +67,36 @@ def change_ip():
     s.send(('AUTHENTICATE "'+P+'"\r\nSIGNAL NEWNYM\r\n').encode())
     s.close()
 
-#not working ip rotation
-def remote_web_driver(url):
-    options = webdriver.FirefoxOptions()
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument('--headless')
-    options.add_argument('--proxy=socks5://proxy:9050')
-
-    
-    driver = webdriver.Remote(
-            desired_capabilities=DesiredCapabilities.FIREFOX,
-            command_executor="http://firefox-driver:4444",
-            options=options
-            #proxy=proxy
-        )
-    driver.get(url)
-    response = driver.page_source
-    driver.quit()
-    return response
-
 #working ip rotation
 def remote_web_driver_chrome(url):
     PROXY = 'socks5://proxy:9050'
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
     options.add_argument('--proxy-server=%s' % PROXY)
-
-    
     driver = webdriver.Remote(
             desired_capabilities=DesiredCapabilities.CHROME,
             command_executor="http://chrome-driver:4444",
             options=options
         )
-    driver.get(url)
-    response = driver.page_source
-    driver.quit()
-    return response
+    return driver
+
+
+def get_link_by_text(driver, text):
+    """Find link in the page with given text"""
+    element = driver.find_element_by_link_text(text.strip())
+    return element.get_attribute("href")
+
+def get_list_by_tag_name(driver, tag_name="a"):
+    """Get list of text in all element by class_name"""
+    element_list = []
+    try:
+        all_elements = driver.find_elements_by_tag_name(tag_name)
+        element_list = [x.text for x in all_elements if len(x.text) > 0]
+    except (NoSuchElementException, WebDriverException) as e:
+        logging.error(e)
+    return element_list
+
     
 if __name__ == "__main__":
-#    test_ip_change_requests()
-    # test_ip_change_firefox()
-    test_ip_change_chrome()
+    #url = "https://www.facebookcorewwwi.onion/"
+    scrape(url="http://zqktlwi4fecvo6ri.onion/wiki/index.php/Main_Page")
