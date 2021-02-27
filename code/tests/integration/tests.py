@@ -28,6 +28,11 @@ def test_detective_investigate_with_default():
     detective = Detective()
     assert None == detective.investigate()
 
+# def test_detective_investigate_with_a_list_of_urls(caplog):
+#     caplog.set_level(logging.INFO)
+#     detective = Detective()
+#     assert None == detective.investigate(['https://www.facebookcorewwwi.onion/'])
+
 def test_service_creates_new_user():
     user_repo = UserSchema().load({'email': 'pippo@email.com'})
     response = Service().create_user(user_repo)

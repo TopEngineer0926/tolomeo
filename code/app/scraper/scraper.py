@@ -12,17 +12,13 @@ logging.getLogger().setLevel(logging.INFO)
 P= "5+Z4X6zxgc^pQNDSyb*%-b9d5*p_u^35ZyB_A5*D"
 
 def scrape(url):
-    logging.info('-----------------Begin Scrape-----------------') 
     change_ip()
     time.sleep(random.randint(1,6))
     web_driver = remote_web_driver_chrome(url)
     category_links = get_category_links(web_driver, url)
-
-    # for x in list(category_links)[0:3]: to range list items
-    for x in list(category_links):
-            logging.info(x)
-            logging.info(category_links[x])
-    logging.info('-----------------End Scrape-----------------')
+    return {
+        "found_links": category_links
+    }
 
 def change_ip():
     host_ip = socket.gethostbyname('proxy')
