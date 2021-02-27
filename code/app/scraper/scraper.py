@@ -2,8 +2,8 @@ import os
 import logging
 import socket
 import socks
-from bs4 import BeautifulSoup
 import time
+import random
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
@@ -11,37 +11,18 @@ logging.getLogger().setLevel(logging.INFO)
 
 P= "5+Z4X6zxgc^pQNDSyb*%-b9d5*p_u^35ZyB_A5*D"
 
-
 def scrape(url):
     logging.info('-----------------Begin Scrape-----------------') 
-
     change_ip()
+    time.sleep(random.randint(1,6))
     web_driver = remote_web_driver_chrome(url)
-    web_driver.get(url)
-    
-    category_links = {x: get_link_by_text(web_driver, x)
-                for x in get_list_by_tag_name(web_driver, 'a')}
-    web_driver.quit()
-    for x in list(category_links)[0:1]:
-        logging.info(x)
-        logging.info(category_links[x])
-        new_url = category_links[x]
-        change_ip()
-        time.sleep(3)
-        web_driver = remote_web_driver_chrome(new_url)
-        web_driver.get(url)
-        category_links = {x: get_link_by_text(web_driver, x)
-                for x in get_list_by_tag_name(web_driver, 'a')}
-        for x in list(category_links)[0:3]:
+    category_links = get_category_links(web_driver, url)
+
+    # for x in list(category_links)[0:3]: to range list items
+    for x in list(category_links):
             logging.info(x)
             logging.info(category_links[x])
-        web_driver.quit()
     logging.info('-----------------End Scrape-----------------')
-
-def print_ip(html):
-    soup = BeautifulSoup(html, 'html.parser')
-    logging.info(html)
-    #logging.info(soup.find_all("span"))
 
 def change_ip():
     host_ip = socket.gethostbyname('proxy')
@@ -63,6 +44,12 @@ def remote_web_driver_chrome(url):
         )
     return driver
 
+def get_category_links(web_driver, url):
+    web_driver.get(url)
+    category_links = {x: get_link_by_text(web_driver, x)
+                for x in get_list_by_tag_name(web_driver, 'a')}
+    web_driver.quit()
+    return category_links
 
 def get_link_by_text(driver, text):
     """Find link in the page with given text"""
@@ -79,7 +66,6 @@ def get_list_by_tag_name(driver, tag_name="a"):
         logging.error(e)
     return element_list
 
-    
 if __name__ == "__main__":
     #url = "https://www.facebookcorewwwi.onion/"
     scrape(url="http://zqktlwi4fecvo6ri.onion/wiki/index.php/Main_Page")
