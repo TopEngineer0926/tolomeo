@@ -12,7 +12,6 @@ services:
     image: "backend"
     build: "./code"
     links: 
-      - database
       - postgres
     ports:
       - "5000:5000"
@@ -21,23 +20,7 @@ services:
     networks: 
       - default
     depends_on:
-      - database
       - postgres 
-      
-  database:
-    container_name: "mongodb"
-    image: "mongo:4.2.12-bionic"
-    environment: 
-      - MONGO_INITDB_DATABASE=scraper
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=secret
-    volumes: 
-      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
-      - ./mongo-volume:/data/db
-    ports: 
-      - "27019:27017"
-    networks: 
-      - default
   
   postgres:
     container_name: "postgres"
@@ -54,22 +37,22 @@ services:
     networks: 
       - default
     
-  firefox-driver:
-    container_name: "firefox-driver"
-    image: selenium/standalone-firefox:85.0
-    environment: 
-      - https_proxy=socks5://proxy:9050
-      - HTTPS_PROXY=socks5://proxy:9050
-      - http_proxy=socks5://proxy:9050
-      - HTTP_PROXY=socks5://proxy:9050
-      - no_proxy=
-      - NO_PROXY=
-    volumes:
-      - /dev/shm:/dev/shm
-    ports:
-      - 4455:4455
-    networks:
-      - default
+  # firefox-driver:
+  #   container_name: "firefox-driver"
+  #   image: selenium/standalone-firefox:85.0
+  #   environment: 
+  #     - https_proxy=socks5://proxy:9050
+  #     - HTTPS_PROXY=socks5://proxy:9050
+  #     - http_proxy=socks5://proxy:9050
+  #     - HTTP_PROXY=socks5://proxy:9050
+  #     - no_proxy=
+  #     - NO_PROXY=
+  #   volumes:
+  #     - /dev/shm:/dev/shm
+  #   ports:
+  #     - 4455:4455
+  #   networks:
+  #     - default
 
   chrome-driver:
     container_name: "chrome-driver"

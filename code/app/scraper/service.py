@@ -1,9 +1,9 @@
 from app.repository import Repository
-from app.repository.mongo import MongoRepository
+from app.repository.postgres import PostgresRepository
 import uuid
 
 class Service(object):
-  def __init__(self, repo_client=Repository(adapter=MongoRepository)):
+  def __init__(self, repo_client=Repository(adapter=PostgresRepository)):
     self.repo_client = repo_client
 
   def find_all_users(self, user_email):
