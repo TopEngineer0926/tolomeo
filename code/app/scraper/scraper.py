@@ -1,32 +1,15 @@
 import os
 import logging
-import requests
 import socket
 import socks
 from bs4 import BeautifulSoup
-from stem import Signal
-from stem.control import Controller
 import time
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.webdriver.common.proxy import Proxy, ProxyType
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
-
-
 
 logging.getLogger().setLevel(logging.INFO)
 
-BASE_URL = 'http://www.example.com/'
 P= "5+Z4X6zxgc^pQNDSyb*%-b9d5*p_u^35ZyB_A5*D"
-
-proxies = {
-    'http': 'socks5://proxy:9050',
-    'https': 'socks5://proxy:9050'
-}
 
 
 def scrape(url):
