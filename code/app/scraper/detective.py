@@ -13,10 +13,19 @@
 import app.scraper.scraper as Scraper
 import logging
 import uuid
+from app.repository import Repository
+from app.repository.postgres import PostgresRepository
 logging.getLogger().setLevel(logging.INFO)
 
 class Detective():
+    def __init__(self, repo_client=Repository(adapter=PostgresRepository)):
+        self.repo_client = repo_client
+
     def investigate(self, urls_list=[], parent=None, keywords=[], steps=1):
+        if not urls_list:
+            return None
+
+        result = []
         for url in list(urls_list):
             evidence = Scraper.scrape(url)
             evidence.update(
@@ -27,5 +36,6 @@ class Detective():
                     'source': "website"
                 }
             )
-            logging.info(evidence)
-        return None
+            evidence = self.repo_client.save_evidence(evidence)
+            result.append(evidence)
+        return result

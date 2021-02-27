@@ -20,7 +20,9 @@ def scrape(url):
     return {
         "url": url,
         "title": title,
-        "found_links": category_links
+        "urls_found": category_links,
+        "urls_queryable": category_links, #TODO: match valid http urls
+        "keywords_found": [],
     }
 
 def change_ip():

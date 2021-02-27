@@ -35,6 +35,25 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: evidences; Type: TABLE; Schema: public; Owner: admin_dip
+--
+
+CREATE TABLE public.evidences (
+    uuid character varying NOT NULL,
+    source_type character varying,
+    parent character varying,
+    keywords character varying,
+    keywords_found character varying,
+    urls_found text,
+    urls_queryable text,
+    title character varying,
+    url character varying
+);
+
+
+ALTER TABLE public.evidences OWNER TO admin_dip;
+
+--
 -- Name: utenti; Type: TABLE; Schema: public; Owner: admin_dip
 --
 

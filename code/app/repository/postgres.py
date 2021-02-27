@@ -1,6 +1,7 @@
 import os
 import psycopg2
 from psycopg2 import Error
+from flask import json
 
 COLLECTION_NAME = 'users'
 DOMAIN = 'mongodb'
@@ -18,6 +19,28 @@ class PostgresRepository(object):
 
         except (Exception, Error) as error:
             print("Error while connecting to PostgreSQL", error)
+    
+    def save_evidence(self, evidence={}):
+        cursor = self.connection.cursor()
+        query = '''
+        INSERT INTO public.evidences
+        (uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url)
+        VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');
+        '''.format(evidence['uuid'], evidence['source'], evidence['parent'], evidence['keywords'], 
+        evidence['keywords_found'], json.dumps(evidence['urls_found']),
+        json.dumps(evidence['urls_queryable']), evidence['title'], evidence['url'])
+        cursor.execute(query)
+        self.connection.commit()
+        return evidence
+    
+    def find_evidence(self, uuid):
+        cursor = self.connection.cursor()
+        query = '''
+        SELECT uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url FROM evidences WHERE uuid = '{}'
+        '''.format(uuid)
+        cursor.execute(query)
+        row = cursor.fetchone()
+        return row
 
     def find_all_users(self, selector):
         cursor = self.connection.cursor()

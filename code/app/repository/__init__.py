@@ -22,3 +22,9 @@ class Repository(object):
   
   def version(self):
     return self.client.version()
+  
+  def save_evidence(self, evidence):
+    return self.client.save_evidence(evidence)
+  
+  def find_evidence(self, uuid):
+    return self.client.find_evidence(uuid)
