@@ -15,8 +15,11 @@ def scrape(url):
     change_ip()
     time.sleep(random.randint(1,6))
     web_driver = remote_web_driver_chrome(url)
+    title = web_driver.title
     category_links = get_category_links(web_driver, url)
     return {
+        "url": url,
+        "title": title,
         "found_links": category_links
     }
 
