@@ -7,6 +7,7 @@ import sys
 import json
 import os
 from app.scraper.service import Service
+from app.scraper.detective import Detective
 from app.scraper.schema import UserSchema
 from app.repository import Repository
 from app.repository.postgres import PostgresRepository
@@ -22,6 +23,10 @@ logger.addHandler(handler)
 def test_true():
     a = True
     assert True == a, "Must Be true"
+
+def test_detective_investigate_with_default():
+    detective = Detective()
+    assert None == detective.investigate()
 
 def test_service_creates_new_user():
     user_repo = UserSchema().load({'email': 'pippo@email.com'})
