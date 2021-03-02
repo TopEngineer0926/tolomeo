@@ -46,10 +46,10 @@ class EvidenceTable extends Component {
                   {row.uuid}
                 </TableCell>
                 <TableCell align="left">{row.title}</TableCell>
-                <TableCell align="right">{row.parent}</TableCell>
-                <TableCell align="right">{row.url}</TableCell>
-                <TableCell align="right">{row.keywords}</TableCell>
-                <TableCell align="right">{row.keywords_found}</TableCell>
+                <TableCell align="left">{row.parent}</TableCell>
+                <TableCell align="left">{row.url}</TableCell>
+                <TableCell align="left">{row.keywords}</TableCell>
+                <TableCell align="justify" style={{maxWidth:250, overflow:'hidden', maxHeight:50, textOverflow:"ellipsis", maxLines: 3, whiteSpace:"nowrap"}}>{row.keywords_found}</TableCell>
                 <TableCell align="justify" style={{maxWidth:250, overflow:'hidden', maxHeight:50, textOverflow:"ellipsis", maxLines: 3, whiteSpace:"nowrap"}} >
                   {row.urls_queryable}
                 </TableCell>

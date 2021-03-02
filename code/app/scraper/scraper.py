@@ -4,6 +4,7 @@ import socket
 import socks
 import time
 import random
+import re
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
@@ -19,11 +20,12 @@ def scrape(url, keywords=[]):
     category_links = get_category_links(web_driver, url)
     keywords_found = get_keywords_match(web_driver, keywords)
     web_driver.quit()
+    urls_queryable = filter_category_links(category_links)
     return {
         "url": url,
         "title": title,
         "urls_found": category_links,
-        "urls_queryable": category_links, #TODO: match valid http urls
+        "urls_queryable": urls_queryable,
         "keywords_found": keywords_found,
     }
 
@@ -68,6 +70,12 @@ def get_list_by_tag_name(driver, tag_name="a"):
         logging.error(e)
     return element_list
 
+def filter_category_links(links):
+    if not links:
+        return []
+    searchable_links = [x for x in links.values() if re.match("http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+",x)]
+    return searchable_links
+
 def get_keywords_match(driver, keywords):
     keywords_found = []
     for keyword in keywords:
@@ -77,10 +85,11 @@ def get_keywords_match(driver, keywords):
         })
     return keywords_found
 
-def get_keyword_match_by_text(driver, text):
+def get_keyword_match_by_text(driver, search):
     element_list = []
     try:
-        all_elements = driver.find_elements_by_xpath("//*[contains(text(),'{}')]".format(text))
+        lc = search.lower()
+        all_elements = driver.find_elements_by_xpath("//*[contains(translate(., 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'),'{lc}')]".format(lc=lc))
         element_list = [x.text for x in all_elements if len(x.text) > 0]
     except Exception as e:
         logging.error(e)
