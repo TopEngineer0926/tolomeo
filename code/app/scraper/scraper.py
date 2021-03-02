@@ -73,7 +73,7 @@ def get_keywords_match(driver, keywords):
     for keyword in keywords:
         elems = get_keyword_match_by_text(driver, keyword)
         keywords_found.append({
-            keyword: len(elems)
+            keyword: elems
         })
     return keywords_found
 
