@@ -11,18 +11,20 @@ logging.getLogger().setLevel(logging.INFO)
 
 P= "5+Z4X6zxgc^pQNDSyb*%-b9d5*p_u^35ZyB_A5*D"
 
-def scrape(url):
+def scrape(url, keywords=[]):
     change_ip()
     time.sleep(random.randint(1,6))
     web_driver = remote_web_driver_chrome(url)
     title = web_driver.title
     category_links = get_category_links(web_driver, url)
+    keywords_found = get_keywords_match(web_driver, keywords)
+    web_driver.quit()
     return {
         "url": url,
         "title": title,
         "urls_found": category_links,
         "urls_queryable": category_links, #TODO: match valid http urls
-        "keywords_found": [],
+        "keywords_found": keywords_found,
     }
 
 def change_ip():
@@ -49,7 +51,6 @@ def get_category_links(web_driver, url):
     web_driver.get(url)
     category_links = {x: get_link_by_text(web_driver, x)
                 for x in get_list_by_tag_name(web_driver, 'a')}
-    web_driver.quit()
     return category_links
 
 def get_link_by_text(driver, text):
@@ -63,7 +64,25 @@ def get_list_by_tag_name(driver, tag_name="a"):
     try:
         all_elements = driver.find_elements_by_tag_name(tag_name)
         element_list = [x.text for x in all_elements if len(x.text) > 0]
-    except (NoSuchElementException, WebDriverException) as e:
+    except Exception as e:
+        logging.error(e)
+    return element_list
+
+def get_keywords_match(driver, keywords):
+    keywords_found = []
+    for keyword in keywords:
+        elems = get_keyword_match_by_text(driver, keyword)
+        keywords_found.append({
+            keyword: len(elems)
+        })
+    return keywords_found
+
+def get_keyword_match_by_text(driver, text):
+    element_list = []
+    try:
+        all_elements = driver.find_elements_by_xpath("//*[contains(text(),'{}')]".format(text))
+        element_list = [x.text for x in all_elements if len(x.text) > 0]
+    except Exception as e:
         logging.error(e)
     return element_list
 

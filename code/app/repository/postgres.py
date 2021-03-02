@@ -27,7 +27,7 @@ class PostgresRepository(object):
         (uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url)
         VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');
         '''.format(evidence['uuid'], evidence['source'], evidence['parent'], evidence['keywords'], 
-        evidence['keywords_found'], json.dumps(evidence['urls_found']),
+        json.dumps(evidence['keywords_found']), json.dumps(evidence['urls_found']),
         json.dumps(evidence['urls_queryable']), evidence['title'], evidence['url'])
         cursor.execute(query)
         self.connection.commit()

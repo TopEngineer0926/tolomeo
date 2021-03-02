@@ -27,7 +27,7 @@ class Detective():
 
         result = []
         for url in list(urls_list):
-            evidence = Scraper.scrape(url)
+            evidence = Scraper.scrape(url, keywords)
             evidence.update(
                 {
                     'uuid': str(uuid.uuid4()),
