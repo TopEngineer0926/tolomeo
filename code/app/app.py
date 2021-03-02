@@ -35,6 +35,10 @@ def create():
 def crawl():
     return 'started crawling\n'
 
+@app.route('/evidences')
+def get_evidences():
+    return json_response(Service().get_evidences())
+
 @app.route('/')
 def index():
     return 'Hello World!'

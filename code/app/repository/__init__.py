@@ -28,3 +28,6 @@ class Repository(object):
   
   def find_evidence(self, uuid):
     return self.client.find_evidence(uuid)
+  
+  def get_evidences(self):
+    return self.client.get_evidences()

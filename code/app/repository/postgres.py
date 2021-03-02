@@ -42,6 +42,30 @@ class PostgresRepository(object):
         row = cursor.fetchone()
         return row
 
+    def get_evidences(self):
+        cursor = self.connection.cursor()
+        query = '''
+        SELECT uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url FROM evidences
+        '''
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        response = []
+        for row in rows:
+            response.append(
+                {
+                    'uuid': row[0], 
+                    'source_type': row[1],
+                    'parent': row[2], 
+                    'keywords': row[3], 
+                    'keywords_found': row[4], 
+                    'urls_found': row[5], 
+                    'urls_queryable': row[6], 
+                    'title': row[7], 
+                    'url': row[8]
+                }
+            )
+        return response
+
     def find_all_users(self, selector):
         cursor = self.connection.cursor()
         query = '''

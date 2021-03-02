@@ -6,6 +6,9 @@ class Service(object):
   def __init__(self, repo_client=Repository(adapter=PostgresRepository)):
     self.repo_client = repo_client
 
+  def get_evidences(self):
+      return self.repo_client.get_evidences()
+
   def find_all_users(self, user_email):
     return self.repo_client.find_all_users({'email': user_email})
     
