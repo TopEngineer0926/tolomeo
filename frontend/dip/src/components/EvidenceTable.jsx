@@ -5,6 +5,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { Container } from '@material-ui/core';
+import SearchDialog from './SearchDialog'
 
 class EvidenceTable extends Component {
 
@@ -25,17 +26,18 @@ class EvidenceTable extends Component {
   render() {
     return (
       <Container maxWidth="xl">
-        <h1>Evidences Grid</h1>
+        <h1>Risultati dello scraping</h1>
+        <SearchDialog></SearchDialog>
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Id</TableCell>
-              <TableCell>Title</TableCell>
-              <TableCell>Parent</TableCell>
+              <TableCell>UUID</TableCell>
+              <TableCell>Titolo</TableCell>
+              <TableCell>Precedente</TableCell>
               <TableCell>Url</TableCell>
-              <TableCell>Keywords Searched</TableCell>
-              <TableCell>Keywords Found</TableCell>
-              <TableCell>Urls Queryable</TableCell>
+              <TableCell>Parole chiave cercate</TableCell>
+              <TableCell>Parole chiave trovate</TableCell>
+              <TableCell>Url trovate utilizzabili</TableCell>
 
             </TableRow>
           </TableHead>

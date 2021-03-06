@@ -30,7 +30,7 @@ export default function DipAppBar() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            Deep Investigation Pro-Tool
+            TOLOMEO
           </Typography>
           <Button color="inherit">Login</Button>
         </Toolbar>
