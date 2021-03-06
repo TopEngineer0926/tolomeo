@@ -24,11 +24,11 @@ class PostgresRepository(object):
         cursor = self.connection.cursor()
         query = '''
         INSERT INTO public.evidences
-        (uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url)
-        VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');
+        (uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url, step, total_steps, created)
+        VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', now());
         '''.format(evidence['uuid'], evidence['source'], evidence['parent'], evidence['keywords'], 
         json.dumps(evidence['keywords_found']), json.dumps(evidence['urls_found']),
-        json.dumps(evidence['urls_queryable']), evidence['title'], evidence['url'])
+        json.dumps(evidence['urls_queryable']), evidence['title'], evidence['url'], evidence['step'], evidence['total_steps'])
         cursor.execute(query)
         self.connection.commit()
         return evidence

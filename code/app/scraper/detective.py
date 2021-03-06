@@ -21,7 +21,7 @@ class Detective():
     def __init__(self, repo_client=Repository(adapter=PostgresRepository)):
         self.repo_client = repo_client
 
-    def investigate(self, urls_list=[], parent=None, keywords=[], steps=1):
+    def investigate(self, urls_list=[], parent=None, keywords=[], step=1, total_steps=1):
         if not urls_list:
             return None
 
@@ -33,7 +33,9 @@ class Detective():
                     'uuid': str(uuid.uuid4()),
                     'parent': parent,
                     'keywords': ','.join(keywords),
-                    'source': "website"
+                    'source': "website",
+                    'step': step,
+                    'total_steps': total_steps
                 }
             )
             evidence = self.repo_client.save_evidence(evidence)

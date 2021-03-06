@@ -47,7 +47,10 @@ CREATE TABLE public.evidences (
     urls_found text,
     urls_queryable text,
     title character varying,
-    url character varying
+    url character varying,
+    step numeric,
+    total_steps numeric,
+    created timestamp(0) with time zone
 );
 
 
@@ -66,11 +69,26 @@ CREATE TABLE public.utenti (
 ALTER TABLE public.utenti OWNER TO admin_dip;
 
 --
+-- Data for Name: evidences; Type: TABLE DATA; Schema: public; Owner: admin_dip
+--
+
+COPY public.evidences (uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url, step, total_steps, created) FROM stdin;
+\.
+
+
+--
 -- Data for Name: utenti; Type: TABLE DATA; Schema: public; Owner: admin_dip
 --
 
 COPY public.utenti (uuid, email) FROM stdin;
 \.
+
+
+--
+-- Name: evidences_uuid_idx; Type: INDEX; Schema: public; Owner: admin_dip
+--
+
+CREATE INDEX evidences_uuid_idx ON public.evidences USING btree (uuid);
 
 
 --
