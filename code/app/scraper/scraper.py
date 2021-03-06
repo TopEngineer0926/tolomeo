@@ -94,7 +94,3 @@ def get_keyword_match_by_text(driver, search):
     except Exception as e:
         logging.error(e)
     return element_list
-
-if __name__ == "__main__":
-    #url = "https://www.facebookcorewwwi.onion/"
-    scrape(url="http://zqktlwi4fecvo6ri.onion/wiki/index.php/Main_Page")

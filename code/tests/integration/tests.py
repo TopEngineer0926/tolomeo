@@ -30,9 +30,9 @@ def test_detective_investigate_with_default():
 
 def test_detective_investigate_with_a_list_of_urls_and_keywords(caplog):
     caplog.set_level(logging.INFO)
-    url = 'https://www.facebookcorewwwi.onion/'
+    url = 'http://zqktlwi4fecvo6ri.onion/wiki/index.php/Main_Page' #http://zqktlwi4fecvo6ri.onion/wiki/index.php/Main_Page # hidden wiki
     detective = Detective()
-    evidence = detective.investigate(urls_list=[url], keywords=['FACEBOOK', 'revenge'])[0]
+    evidence = detective.investigate(urls_list=[url], keywords=['drug', 'revenge'])[0]
     repo_client=Repository(adapter=PostgresRepository)
     db_evidence = repo_client.find_evidence(evidence['uuid'])
     assert evidence['uuid'] == db_evidence[0]

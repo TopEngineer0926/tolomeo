@@ -2,6 +2,7 @@ import os
 import psycopg2
 from psycopg2 import Error
 from flask import json
+import re
 
 COLLECTION_NAME = 'users'
 DOMAIN = 'mongodb'
@@ -27,8 +28,8 @@ class PostgresRepository(object):
         (uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url, step, total_steps, created)
         VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', now());
         '''.format(evidence['uuid'], evidence['source'], evidence['parent'], evidence['keywords'], 
-        json.dumps(evidence['keywords_found']), json.dumps(evidence['urls_found']),
-        json.dumps(evidence['urls_queryable']), evidence['title'], evidence['url'], evidence['step'], evidence['total_steps'])
+        re.sub(r'[^a-zA-Z\s?!,;:.{}\/"\[\]]+', '', json.dumps(evidence['keywords_found'])), re.sub(r'[^a-zA-Z\s?!,;:.{}\/"\[\]]+', '', json.dumps(evidence['urls_found'])),
+        re.sub(r'[^a-zA-Z\s?!,;:.{}\/"\[\]]+', '', json.dumps(evidence['urls_queryable'])), re.sub(r'[^a-zA-Z\s?!,;:.{}\/"\[\]]+', '', evidence['title']), evidence['url'], evidence['step'], evidence['total_steps'])
         cursor.execute(query)
         self.connection.commit()
         return evidence
