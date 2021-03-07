@@ -42,11 +42,21 @@ class PostgresRepository(object):
         cursor.execute(query)
         row = cursor.fetchone()
         return row
+    
+    def find_evidence_by_url(self, url):
+        cursor = self.connection.cursor()
+        query = '''
+        SELECT COUNT(uuid) AS counter FROM evidences WHERE url = '{}'
+        '''.format(url)
+        cursor.execute(query)
+        counter = cursor.fetchone()[0]
+        return counter > 1
 
     def get_evidences(self):
         cursor = self.connection.cursor()
         query = '''
-        SELECT uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url FROM evidences
+        SELECT uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url, step, total_steps FROM evidences
+        ORDER BY step, created
         '''
         cursor.execute(query)
         rows = cursor.fetchall()
@@ -62,7 +72,9 @@ class PostgresRepository(object):
                     'urls_found': row[5], 
                     'urls_queryable': row[6], 
                     'title': row[7], 
-                    'url': row[8]
+                    'url': row[8],
+                    'step': str(row[9]),
+                    'total_steps': str(row[10]),
                 }
             )
         return response

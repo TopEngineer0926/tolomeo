@@ -47,7 +47,11 @@ def change_ip():
 def get_title(response):
     html = response.text
     soup = BeautifulSoup(html, 'html.parser')
-    return soup.title.string
+    title = soup.title
+    if None == title:
+        return "senza titolo"
+    else:
+        return title.string
 
 def get_category_links(response):
     html = response.text

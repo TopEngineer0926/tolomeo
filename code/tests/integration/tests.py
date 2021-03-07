@@ -6,6 +6,7 @@ import logging
 import sys
 import json
 import os
+import uuid
 from app.scraper.service import Service
 from app.scraper.detective import Detective
 from app.scraper.schema import UserSchema
@@ -28,16 +29,54 @@ def test_detective_investigate_with_default():
     detective = Detective()
     assert None == detective.investigate()
 
-def test_detective_investigate_with_a_list_of_urls_and_keywords(caplog):
+# def test_detective_investigate_with_a_list_of_urls_and_keywords(caplog):
+#     caplog.set_level(logging.INFO)
+#     urls = ['https://www.facebookcorewwwi.onion/'] #http://zqktlwi4fecvo6ri.onion/wiki/index.php/Main_Page # hidden wiki
+#     detective = Detective()
+#     evidence = detective.investigate(urls_list=urls, keywords=['drug', 'porn'])[0]
+#     repo_client=Repository(adapter=PostgresRepository)
+#     db_evidence = repo_client.find_evidence(evidence['uuid'])
+#     assert evidence['uuid'] == db_evidence[0]
+#     assert urls[0] == db_evidence[8]
+
+def test_detective_return_none_if_steps_are_over(caplog):
     caplog.set_level(logging.INFO)
     urls = ['https://www.facebookcorewwwi.onion/'] #http://zqktlwi4fecvo6ri.onion/wiki/index.php/Main_Page # hidden wiki
     detective = Detective()
-    evidence = detective.investigate(urls_list=urls, keywords=['drug', 'porn'])[0]
+    evidence = detective.investigate(urls_list=urls, keywords=['drug', 'porn'], step=2, total_steps=1)
+    assert None == evidence
+
+def test_detective_return_none_if_url_already_scraped_and_was_only_one(caplog):
+    caplog.set_level(logging.INFO)
+    repo_client=Repository(adapter=PostgresRepository)
+    puppet_evidence = {
+        'uuid': str(uuid.uuid4()),
+        'parent': None,
+        'keywords': ','.join(['drug', 'porn']),
+        'source': "website",
+        'step': 1,
+        'total_steps': 1,
+        "url": "https://www.facebookcorewwwi.onion/",
+        "title": "",
+        "urls_found": [],
+        "urls_queryable": [],
+        "keywords_found": [],
+    }
+    repo_client.save_evidence(puppet_evidence)
+    urls = ['https://www.facebookcorewwwi.onion/'] #http://zqktlwi4fecvo6ri.onion/wiki/index.php/Main_Page # hidden wiki
+    detective = Detective()
+    evidence = detective.investigate(urls_list=urls, keywords=['drug', 'porn'])
+    assert [] == evidence
+    
+def test_detective_investigate_snowball(caplog):
+    caplog.set_level(logging.INFO)
+    urls = ['https://www.facebookcorewwwi.onion/'] #http://zqktlwi4fecvo6ri.onion/wiki/index.php/Main_Page # hidden wiki
+    detective = Detective()
+    evidence = detective.investigate(urls_list=urls, keywords=['drug', 'porn'], total_steps=2)[0]
     repo_client=Repository(adapter=PostgresRepository)
     db_evidence = repo_client.find_evidence(evidence['uuid'])
     assert evidence['uuid'] == db_evidence[0]
     assert urls[0] == db_evidence[8]
-    
 
 def test_service_creates_new_user():
     user_repo = UserSchema().load({'email': 'pippo@email.com'})

@@ -1,15 +1,3 @@
-# # Generally useful for verifying the page:
-# driver.current_url
-# driver.title
-
-# # The following might be useful for verifying the driver instance:
-# driver.name
-# driver.orientation
-# driver.page_source
-# driver.window_handles
-# driver.current_window_handle
-# driver.desired_capabilities
-
 import app.scraper.scraper as Scraper
 import app.scraper.skeleton_scraper as SkeletonScraper
 import logging
@@ -25,18 +13,23 @@ class Detective():
     def investigate(self, urls_list=[], parent=None, keywords=[], step=1, total_steps=1, render='skeleton'):
         if not urls_list:
             return None
+        if total_steps < step:
+            return None
 
         result = []
         for url in list(urls_list):
+            if self.__already_scraped(url):
+                continue
             evidence = {}
             if 'rendered' == render:
                 evidence = Scraper.scrape(url, keywords)
             else:
                 evidence = SkeletonScraper.scrape(url, keywords)
 
+            evidence_uuid = str(uuid.uuid4())
             evidence.update(
                 {
-                    'uuid': str(uuid.uuid4()),
+                    'uuid': evidence_uuid,
                     'parent': parent,
                     'keywords': ','.join(keywords),
                     'source': "website",
@@ -46,4 +39,17 @@ class Detective():
             )
             evidence = self.repo_client.save_evidence(evidence)
             result.append(evidence)
+            next_step = step + 1
+            child_result = self.investigate(urls_list=evidence.get('urls_queryable'), 
+                parent=evidence_uuid, 
+                keywords=keywords, 
+                step=next_step, 
+                total_steps=total_steps, 
+                render=render)
+            if not None == child_result and not [] == child_result:
+                result.append(child_result)
+
         return result
+
+    def __already_scraped(self, url):
+        return self.repo_client.find_evidence_by_url(url)
