@@ -55,8 +55,11 @@ def get_category_links(response):
     a_tags = soup.find_all("a")
     category_links = {}
     for a in a_tags:
+        name = a.string
+        if None == name:
+            name = 'Non presente'
         category_links.update({
-            a.string: a.get('href')
+            name: a.get('href')
         })
     return category_links
 
@@ -76,8 +79,3 @@ def get_keywords_match(response, keywords):
             keyword: elems
         })
     return keywords_found
-
-
-if __name__ == "__main__":
-    record = scrape(url='http://zqktlwi4fecvo6ri.onion/wiki/index.php/Main_Page', keywords=['SmoKEY']) 
-    logging.info(record)

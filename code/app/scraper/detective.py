@@ -11,6 +11,7 @@
 # driver.desired_capabilities
 
 import app.scraper.scraper as Scraper
+import app.scraper.skeleton_scraper as SkeletonScraper
 import logging
 import uuid
 from app.repository import Repository
@@ -21,13 +22,18 @@ class Detective():
     def __init__(self, repo_client=Repository(adapter=PostgresRepository)):
         self.repo_client = repo_client
 
-    def investigate(self, urls_list=[], parent=None, keywords=[], step=1, total_steps=1):
+    def investigate(self, urls_list=[], parent=None, keywords=[], step=1, total_steps=1, render='skeleton'):
         if not urls_list:
             return None
 
         result = []
         for url in list(urls_list):
-            evidence = Scraper.scrape(url, keywords)
+            evidence = {}
+            if 'rendered' == render:
+                evidence = Scraper.scrape(url, keywords)
+            else:
+                evidence = SkeletonScraper.scrape(url, keywords)
+
             evidence.update(
                 {
                     'uuid': str(uuid.uuid4()),
