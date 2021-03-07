@@ -1,0 +1,83 @@
+import os
+import logging
+import socket
+import socks
+import time
+import random
+import re
+import requests
+from bs4 import BeautifulSoup
+
+logging.getLogger().setLevel(logging.INFO)
+
+proxies = {
+    'http': 'socks5h://proxy:9050',
+    'https': 'socks5h://proxy:9050'
+}
+
+headers = {
+        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
+    }
+
+P= "5+Z4X6zxgc^pQNDSyb*%-b9d5*p_u^35ZyB_A5*D"
+
+def scrape(url, keywords=[]):
+    change_ip()
+    time.sleep(random.randint(1,6))
+    response = requests.get(url, proxies=proxies)
+    title = get_title(response)
+    category_links = get_category_links(response)
+    urls_queryable = filter_category_links(category_links)
+    keywords_found = get_keywords_match(response, keywords)
+    return {
+        "url": url,
+        "title": title,
+        "urls_found": category_links,
+        "urls_queryable": urls_queryable,
+        "keywords_found": keywords_found,
+    }
+
+def change_ip():
+    host_ip = socket.gethostbyname('proxy')
+    s = socket.socket()
+    s.connect((host_ip, 9051))
+    s.send(('AUTHENTICATE "'+P+'"\r\nSIGNAL NEWNYM\r\n').encode())
+    s.close()
+
+def get_title(response):
+    html = response.text
+    soup = BeautifulSoup(html, 'html.parser')
+    return soup.title.string
+
+def get_category_links(response):
+    html = response.text
+    soup = BeautifulSoup(html, 'html.parser')
+    a_tags = soup.find_all("a")
+    category_links = {}
+    for a in a_tags:
+        category_links.update({
+            a.string: a.get('href')
+        })
+    return category_links
+
+def filter_category_links(links):
+    if not links:
+        return []
+    searchable_links = [x for x in links.values() if re.match("http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+",x)]
+    return searchable_links
+
+def get_keywords_match(response, keywords):
+    html = response.text
+    soup = BeautifulSoup(html, 'html.parser')
+    keywords_found = []
+    for keyword in keywords:
+        elems = soup.find_all(string=re.compile(keyword,re.IGNORECASE + re.MULTILINE + re.DOTALL))
+        keywords_found.append({
+            keyword: elems
+        })
+    return keywords_found
+
+
+if __name__ == "__main__":
+    record = scrape(url='http://zqktlwi4fecvo6ri.onion/wiki/index.php/Main_Page', keywords=['SmoKEY']) 
+    logging.info(record)

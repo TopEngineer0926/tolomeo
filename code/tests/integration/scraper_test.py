@@ -22,8 +22,8 @@ BASE_URL = 'http://www.example.com/'
 P= "5+Z4X6zxgc^pQNDSyb*%-b9d5*p_u^35ZyB_A5*D"
 
 proxies = {
-    'http': 'socks5://proxy:9050',
-    'https': 'socks5://proxy:9050'
+    'http': 'socks5h://proxy:9050',
+    'https': 'socks5h://proxy:9050'
 }
 
 
