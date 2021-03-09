@@ -39,6 +39,14 @@ def crawl():
 def get_evidences():
     return json_response(Service().get_evidences())
 
+@app.route('/map/<uuid>', methods=["GET"])
+def get_evidences_map(uuid):
+    return json_response(Service().get_evidences_map(uuid))
+
+@app.route('/map', methods=["GET"])
+def get_evidences_map_first():
+    return json_response(Service().get_evidences_map(None))
+
 @app.route('/')
 def index():
     return 'Hello World!'

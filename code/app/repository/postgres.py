@@ -111,7 +111,7 @@ class PostgresRepository(object):
             response.append(
                 {
                     'uuid': row[0], 
-                    'step': row[1],
+                    'step': str(row[1]),
                     'url': row[2], 
                     'keywords_found': row[3],
                     'children': children,
@@ -143,7 +143,7 @@ class PostgresRepository(object):
             response.append(
                 {
                     'uuid': row[0], 
-                    'step': row[1],
+                    'step': str(row[1]),
                     'url': row[2], 
                     'keywords_found': row[3],
                     'children': [],
