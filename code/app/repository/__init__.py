@@ -34,3 +34,6 @@ class Repository(object):
   
   def get_evidences(self):
     return self.client.get_evidences()
+  
+  def get_evidences_map(self, uuid):
+    return self.client.get_evidences_map(uuid)

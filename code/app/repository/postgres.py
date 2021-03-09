@@ -3,6 +3,7 @@ import psycopg2
 from psycopg2 import Error
 from flask import json
 import re
+import logging
 
 COLLECTION_NAME = 'users'
 DOMAIN = 'mongodb'
@@ -32,6 +33,7 @@ class PostgresRepository(object):
         re.sub(r'[^a-zA-Z\s?!,;:.{}\/"\[\]]+', '', json.dumps(evidence['urls_queryable'])), re.sub(r'[^a-zA-Z\s?!,;:.{}\/"\[\]]+', '', evidence['title']), evidence['url'], evidence['step'], evidence['total_steps'])
         cursor.execute(query)
         self.connection.commit()
+        cursor.close()
         return evidence
     
     def find_evidence(self, uuid):
@@ -41,6 +43,7 @@ class PostgresRepository(object):
         '''.format(uuid)
         cursor.execute(query)
         row = cursor.fetchone()
+        cursor.close()
         return row
     
     def find_evidence_by_url(self, url):
@@ -50,6 +53,7 @@ class PostgresRepository(object):
         '''.format(url)
         cursor.execute(query)
         counter = cursor.fetchone()[0]
+        cursor.close()
         return counter > 1
 
     def get_evidences(self):
@@ -77,7 +81,78 @@ class PostgresRepository(object):
                     'total_steps': str(row[10]),
                 }
             )
+        cursor.close()
         return response
+
+    def get_evidences_map(self, uuid=None):
+        where = ""
+        if uuid:
+            where = "where e.uuid = '{}'".format(uuid)
+        else:
+            where = "where e.step = 1"
+        
+        cursor = self.connection.cursor()
+        query = '''
+        select
+            e.uuid,
+            e.step as start_step,
+            e.url,
+            e.keywords_found,
+            e.parent
+        from
+            evidences e
+        {}
+        '''.format(where)
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        response = []
+        for row in rows:
+            children = self.__get_children(row[0])
+            response.append(
+                {
+                    'uuid': row[0], 
+                    'step': row[1],
+                    'url': row[2], 
+                    'keywords_found': row[3],
+                    'children': children,
+                } 
+            )
+                
+        cursor.close()
+        return response
+
+    def __get_children(self, uuid=None):
+        if None == uuid:
+            return []
+        
+        cursor = self.connection.cursor()
+        query = '''
+        select
+            e.uuid,
+            e.step as start_step,
+            e.url,
+            e.keywords_found
+        from
+            evidences e
+        where e.parent = '{}'
+        '''.format(uuid)
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        response = []
+        for row in rows:
+            response.append(
+                {
+                    'uuid': row[0], 
+                    'step': row[1],
+                    'url': row[2], 
+                    'keywords_found': row[3],
+                    'children': [],
+                } 
+            )
+        cursor.close()
+        return response
+
+
 
     def find_all_users(self, selector):
         cursor = self.connection.cursor()
@@ -89,6 +164,7 @@ class PostgresRepository(object):
         response = []
         for row in rows:
             response.append({'uuid': row[0], 'email': row[1]})
+        cursor.close()
         return response
  
 #   def find(self, selector):
@@ -101,6 +177,7 @@ class PostgresRepository(object):
         '''.format(new_user['uuid'], new_user['email'])
         cursor.execute(query)
         self.connection.commit()
+        cursor.close()
         return new_user
         
 
@@ -114,6 +191,7 @@ class PostgresRepository(object):
         '''.format(selector['email'])
         cursor.execute(query)
         self.connection.commit()
+        cursor.close()
         return cursor.rowcount
 
     def version(self):
@@ -121,4 +199,6 @@ class PostgresRepository(object):
         cursor = self.connection.cursor()
         cursor.execute("SELECT version();")
         # Fetch result
-        return cursor.fetchone() 
+        version = cursor.fetchone()
+        cursor.close()
+        return version

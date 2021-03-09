@@ -8,6 +8,9 @@ class Service(object):
 
   def get_evidences(self):
       return self.repo_client.get_evidences()
+  
+  def get_evidences_map(self, uuid):
+      return self.repo_client.get_evidences_map(uuid)
 
   def find_all_users(self, user_email):
     return self.repo_client.find_all_users({'email': user_email})
