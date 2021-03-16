@@ -15,19 +15,29 @@ P= "5+Z4X6zxgc^pQNDSyb*%-b9d5*p_u^35ZyB_A5*D"
 def scrape(url, keywords=[]):
     change_ip()
     time.sleep(random.randint(1,6))
-    web_driver = remote_web_driver_chrome(url)
-    title = web_driver.title
-    category_links = get_category_links(web_driver, url)
-    keywords_found = get_keywords_match(web_driver, keywords)
-    web_driver.quit()
-    urls_queryable = filter_category_links(category_links)
-    return {
-        "url": url,
-        "title": title,
-        "urls_found": category_links,
-        "urls_queryable": urls_queryable,
-        "keywords_found": keywords_found,
-    }
+    try:
+        web_driver = remote_web_driver_chrome(url)
+        title = web_driver.title
+        category_links = get_category_links(web_driver, url)
+        keywords_found = get_keywords_match(web_driver, keywords)
+        web_driver.quit()
+        urls_queryable = filter_category_links(category_links)
+        return {
+            "url": url,
+            "title": title,
+            "urls_found": category_links,
+            "urls_queryable": urls_queryable,
+            "keywords_found": keywords_found,
+        }
+    except Exception as e:
+        logging.error(str(e))
+        return {
+            "url": url,
+            "title": 'None',
+            "urls_found": 'None',
+            "urls_queryable": 'None',
+            "keywords_found": 'None',
+        }
 
 def change_ip():
     host_ip = socket.gethostbyname('proxy')
@@ -38,7 +48,7 @@ def change_ip():
 
 #working ip rotation
 def remote_web_driver_chrome(url):
-    PROXY = 'socks5://proxy:9050'
+    PROXY = 'socks5h://proxy:9050'
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
     options.add_argument('--proxy-server=%s' % PROXY)

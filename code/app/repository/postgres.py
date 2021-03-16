@@ -152,8 +152,6 @@ class PostgresRepository(object):
         cursor.close()
         return response
 
-
-
     def find_all_users(self, selector):
         cursor = self.connection.cursor()
         query = '''
@@ -167,9 +165,6 @@ class PostgresRepository(object):
         cursor.close()
         return response
  
-#   def find(self, selector):
-#     return self.db.scraper.find_one(selector)
- 
     def create_user(self, new_user):
         cursor = self.connection.cursor()
         query = '''
@@ -179,10 +174,6 @@ class PostgresRepository(object):
         self.connection.commit()
         cursor.close()
         return new_user
-        
-
-#   def update(self, selector, kudo):
-#     return self.db.scraper.replace_one(selector, kudo).modified_count
  
     def delete(self, selector):
         cursor = self.connection.cursor()

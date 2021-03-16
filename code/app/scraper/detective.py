@@ -2,6 +2,7 @@ import app.scraper.scraper as Scraper
 import app.scraper.skeleton_scraper as SkeletonScraper
 import logging
 import uuid
+import re
 from app.repository import Repository
 from app.repository.postgres import PostgresRepository
 logging.getLogger().setLevel(logging.INFO)
@@ -19,6 +20,8 @@ class Detective():
         result = []
         for url in list(urls_list):
             if self.__already_scraped(url):
+                continue
+            if self.__is_not_onion(url):
                 continue
             evidence = {}
             if 'rendered' == render:
@@ -53,3 +56,6 @@ class Detective():
 
     def __already_scraped(self, url):
         return self.repo_client.find_evidence_by_url(url)
+    
+    def __is_not_onion(self, url):
+        return not re.search(r'\.onion(/|$)', url)

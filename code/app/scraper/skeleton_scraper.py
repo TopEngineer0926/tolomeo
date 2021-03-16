@@ -24,18 +24,29 @@ P= "5+Z4X6zxgc^pQNDSyb*%-b9d5*p_u^35ZyB_A5*D"
 def scrape(url, keywords=[]):
     change_ip()
     time.sleep(random.randint(1,6))
-    response = requests.get(url, proxies=proxies)
-    title = get_title(response)
-    category_links = get_category_links(response)
-    urls_queryable = filter_category_links(category_links)
-    keywords_found = get_keywords_match(response, keywords)
-    return {
-        "url": url,
-        "title": title,
-        "urls_found": category_links,
-        "urls_queryable": urls_queryable,
-        "keywords_found": keywords_found,
-    }
+    try:
+        response = requests.get(url, proxies=proxies, timeout=15)
+        title = get_title(response)
+        category_links = get_category_links(response)
+        urls_queryable = filter_category_links(category_links)
+        keywords_found = get_keywords_match(response, keywords)
+        return {
+            "url": url,
+            "title": title,
+            "urls_found": category_links,
+            "urls_queryable": urls_queryable,
+            "keywords_found": keywords_found,
+        }
+    except Exception as e:
+        logging.error(str(e))
+        return {
+            "url": url,
+            "title": 'None',
+            "urls_found": 'None',
+            "urls_queryable": 'None',
+            "keywords_found": 'None',
+        }
+    
 
 def change_ip():
     host_ip = socket.gethostbyname('proxy')
