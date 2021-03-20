@@ -13,7 +13,7 @@ up: ## run containers
 	@docker-compose up -d
 
 up-frontend: ## This will run npm locally on port 3000
-	@cd frontend/dpi && npm start
+	@cd frontend/dip && npm start
 
 shell: ## Enter the backend container python
 	@docker exec -it backend bash
@@ -23,8 +23,7 @@ test: test-integration
 test-integration: ## This will run tests in docker, rebuild image if new or missing
 	@docker-compose exec web pytest --capture=tee-sys tests/integration/tests.py
 
-restart: ## This will reload containers
-	@docker-compose pull && docker-compose restart
+restart: halt up## This will reload containers
 
 dump-init: ## This will dump database schema and save the new initdb.sql
 	@docker exec postgres pg_dump --username=admin_dip --no-password --dbname=dipdb > ./database/init.sql

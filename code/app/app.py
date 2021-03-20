@@ -3,8 +3,10 @@ from flask import Flask, json, g, request
 from pymongo import MongoClient, errors
 from app.scraper.service import Service
 from flask_cors import CORS
+from app.http.middleware.authentication_middleware import AuthenticationMiddleware
 
 app = Flask(__name__)
+app.wsgi_app = AuthenticationMiddleware(app.wsgi_app)
 CORS(app)
 
 @app.route("/users/<email>", methods=["GET"])
