@@ -1,9 +1,5 @@
 import React, { Component } from 'react';
-import EvidenceTable from './components/EvidenceTable'
-import DipAppBar from './components/DipAppBar'
-import Login from './components/Login';
-import EvidenceChart from './components/EvidenceChart';
-import {BrowserRouter, Route, Switch} from 'react-router-dom'
+import Menu from './components/Menu'
 
 class App extends Component {
   constructor(props) {
@@ -17,10 +13,7 @@ class App extends Component {
     const { posts } = this.state;
     return (
       <div>
-        <DipAppBar />
-        {/* <Login></Login> */}
-        {/* <EvidenceTable evidences={posts}></EvidenceTable> */}
-        {/* <EvidenceChart></EvidenceChart> */}
+        <Menu />
       </div>
     );
   }
