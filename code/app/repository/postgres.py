@@ -203,6 +203,8 @@ class PostgresRepository(object):
 
     def __sanitize_string_for_insert(self, body):
         variable = body
+        if None == variable:
+            variable = "None"
         if not isinstance(body, str):
             variable = json.dumps(variable)
         return re.sub(r'[^a-zA-Z\s?!,;:.{}\/"\[\]]+', '', variable)
