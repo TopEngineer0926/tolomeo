@@ -130,37 +130,6 @@ class PostgresRepository(object):
         cursor.close()
         return response
 
-    def __get_children(self, uuid=None):
-        if None == uuid:
-            return []
-        
-        cursor = self.connection.cursor()
-        query = '''
-        select
-            e.uuid,
-            e.step as start_step,
-            e.url,
-            e.keywords_found
-        from
-            evidences e
-        where e.parent = '{}'
-        '''.format(uuid)
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        response = []
-        for row in rows:
-            response.append(
-                {
-                    'uuid': row[0], 
-                    'step': str(row[1]),
-                    'url': row[2], 
-                    'keywords_found': row[3],
-                    'children': [],
-                } 
-            )
-        cursor.close()
-        return response
-
     def find_all_users(self, selector):
         cursor = self.connection.cursor()
         query = '''
@@ -200,6 +169,37 @@ class PostgresRepository(object):
         version = cursor.fetchone()
         cursor.close()
         return version
+    
+    def __get_children(self, uuid=None):
+        if None == uuid:
+            return []
+        
+        cursor = self.connection.cursor()
+        query = '''
+        select
+            e.uuid,
+            e.step as start_step,
+            e.url,
+            e.keywords_found
+        from
+            evidences e
+        where e.parent = '{}'
+        '''.format(uuid)
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        response = []
+        for row in rows:
+            response.append(
+                {
+                    'uuid': row[0], 
+                    'step': str(row[1]),
+                    'url': row[2], 
+                    'keywords_found': row[3],
+                    'children': [],
+                } 
+            )
+        cursor.close()
+        return response
 
     def __sanitize_string_for_insert(self, body):
         variable = body
