@@ -29,8 +29,8 @@ class PostgresRepository(object):
         (uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url, step, total_steps, created)
         VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', now());
         '''.format(evidence['uuid'], evidence['source'], evidence['parent'], evidence['keywords'], 
-        re.sub(r'[^a-zA-Z\s?!,;:.{}\/"\[\]]+', '', json.dumps(evidence['keywords_found'])), re.sub(r'[^a-zA-Z\s?!,;:.{}\/"\[\]]+', '', json.dumps(evidence['urls_found'])),
-        re.sub(r'[^a-zA-Z\s?!,;:.{}\/"\[\]]+', '', json.dumps(evidence['urls_queryable'])), re.sub(r'[^a-zA-Z\s?!,;:.{}\/"\[\]]+', '', evidence['title']), evidence['url'], evidence['step'], evidence['total_steps'])
+        self.__sanitize_string_for_insert(evidence['keywords_found']), self.__sanitize_string_for_insert(evidence['urls_found']),
+        self.__sanitize_string_for_insert(evidence['urls_queryable']), self.__sanitize_string_for_insert(evidence['title']), evidence['url'], evidence['step'], evidence['total_steps'])
         cursor.execute(query)
         self.connection.commit()
         cursor.close()
@@ -204,5 +204,8 @@ class PostgresRepository(object):
         cursor.close()
         return version
 
-    def __sanitize_string_for_insert(body):
-        return re.sub(r'[^a-zA-Z\s?!,;:.{}\/"\[\]]+', '', json.dumps(body))
+    def __sanitize_string_for_insert(self, body):
+        variable = body
+        if not isinstance(body, str):
+            variable = json.dumps(variable)
+        return re.sub(r'[^a-zA-Z\s?!,;:.{}\/"\[\]]+', '', variable)
