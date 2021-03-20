@@ -6,6 +6,7 @@ import re
 from app.repository import Repository
 from app.repository.postgres import PostgresRepository
 logging.getLogger().setLevel(logging.INFO)
+logging.basicConfig(filename='scraper.log')
 
 class Detective():
     def __init__(self, repo_client=Repository(adapter=PostgresRepository)):
@@ -17,11 +18,9 @@ class Detective():
         if total_steps < step:
             return None
 
-        result = []
+        # result = []
         for url in list(urls_list):
             if self.__already_scraped(url):
-                continue
-            if self.__is_not_onion(url):
                 continue
             evidence = {}
             if 'rendered' == render:
@@ -40,19 +39,25 @@ class Detective():
                     'total_steps': total_steps
                 }
             )
-            evidence = self.repo_client.save_evidence(evidence)
-            result.append(evidence)
+            try:
+                evidence = self.repo_client.save_evidence(evidence)
+            except Exception as e:
+                logging.info(str(e))
+                continue
+            urls_count = 0
+            if evidence.get('urls_queryable') != "None":
+                urls_count = len(evidence.get('urls_queryable'))
+            logging.info('------------START urls QUERYABLE------------ number:'+str(urls_count))
+            logging.info(evidence.get('urls_queryable'))
+            logging.info('------------START urls QUERYABLE------------')
             next_step = step + 1
+            logging.info('------------GO TO STEP:'+str(next_step)+' OF URL:'+url+'------------')
             child_result = self.investigate(urls_list=evidence.get('urls_queryable'), 
                 parent=evidence_uuid, 
                 keywords=keywords, 
                 step=next_step, 
                 total_steps=total_steps, 
                 render=render)
-            if not None == child_result and not [] == child_result:
-                result.append(child_result)
-
-        return result
 
     def __already_scraped(self, url):
         return self.repo_client.find_evidence_by_url(url)

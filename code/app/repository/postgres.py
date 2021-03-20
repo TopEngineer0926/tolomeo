@@ -54,7 +54,7 @@ class PostgresRepository(object):
         cursor.execute(query)
         counter = cursor.fetchone()[0]
         cursor.close()
-        return counter > 1
+        return counter > 0
 
     def get_evidences(self):
         cursor = self.connection.cursor()

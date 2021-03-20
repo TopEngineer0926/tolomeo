@@ -25,7 +25,7 @@ def scrape(url, keywords=[]):
     change_ip()
     time.sleep(random.randint(1,6))
     try:
-        response = requests.get(url, proxies=proxies, timeout=15)
+        response = requests.get(url, proxies=proxies, timeout=30)
         title = get_title(response)
         category_links = get_category_links(response)
         urls_queryable = filter_category_links(category_links)

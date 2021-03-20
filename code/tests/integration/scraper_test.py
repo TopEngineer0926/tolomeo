@@ -75,7 +75,7 @@ def test_ip_change_firefox():
 def test_ip_change_chrome():
     logging.info('-----------------Using Chrome-----------------')
     #url = "https://www.facebookcorewwwi.onion/" 
-    url = "http://zqktlwi4fecvo6ri.onion/wiki/index.php/Main_Page"
+    url = "http://6dyi4t72u7y6g763.onion/proxy/index.php?proxy_url=aHR0cDovL2x1c3RhZHVsdGVyeS5jb20=" #torlinkbgs6aabns.onion
     change_ip()
     response = remote_web_driver_chrome(url)
     print_ip(response)
