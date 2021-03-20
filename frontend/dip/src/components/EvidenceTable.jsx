@@ -6,6 +6,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { Container } from '@material-ui/core';
 import SearchDialog from './SearchDialog'
+import {Link as RouterLink} from 'react-router-dom'
+import Button from '@material-ui/core/Button';
 
 class EvidenceTable extends Component {
 

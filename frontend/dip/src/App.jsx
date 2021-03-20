@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Menu from './components/Menu'
+import Navigator from './components/Navigator'
 
 class App extends Component {
   constructor(props) {
@@ -10,10 +10,9 @@ class App extends Component {
   }
 
   render() {
-    const { posts } = this.state;
     return (
       <div>
-        <Menu />
+        <Navigator />
       </div>
     );
   }

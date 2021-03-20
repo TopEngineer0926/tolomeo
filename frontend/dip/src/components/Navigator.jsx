@@ -4,12 +4,11 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import {BrowserRouter as Router, Link as RouterLink, Route, Switch} from 'react-router-dom'
 import EvidenceTable from './EvidenceTable'
 import Login from './Login';
 import EvidenceChart from './EvidenceChart';
+import NavMenu from './NavMenu';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Menu() {
+export default function Navigator() {
   const classes = useStyles();
 
   return (
@@ -31,9 +30,10 @@ export default function Menu() {
       <Router>
         <AppBar position="fixed">
           <Toolbar>
-              <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+              <NavMenu></NavMenu>
+              {/* <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
                 <MenuIcon />
-              </IconButton>
+              </IconButton> */}
               <Typography variant="h6" className={classes.title}>
                 TOLOMEO
               </Typography>
