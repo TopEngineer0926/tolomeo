@@ -12,7 +12,6 @@ PORT = 27017
 class PostgresRepository(object):
     def __init__(self):
         try:
-            # Connect to an existing database
             self.connection = psycopg2.connect(user="admin_dip",
                                         password="admin_dip",
                                         host="postgres",
@@ -196,10 +195,8 @@ class PostgresRepository(object):
         return cursor.rowcount
 
     def version(self):
-        # Executing a SQL query
         cursor = self.connection.cursor()
         cursor.execute("SELECT version();")
-        # Fetch result
         version = cursor.fetchone()
         cursor.close()
         return version
