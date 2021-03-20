@@ -35,3 +35,6 @@ clean-images: ## This will clean all unused docker images not used by current co
 
 up-frontend: ## This will run npm locally on port 3000
 	@cd frontend/dpi && npm start
+
+scan: ## With this you can scan an onion site, (eg. onion_site=fakeonion.onion) and get a json report to scan_result.log file
+	@docker-compose exec lookup onionscan --jsonReport --verbose --torProxyAddress=0.0.0.0:9050 $(onion_site) > scan_result.log

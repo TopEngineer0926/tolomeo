@@ -2,3 +2,5 @@
 **/.pytest_cache/
 mongo-volume/
 postgres/
+services/onionscan/onionscandb
+scan_result.log

@@ -4,28 +4,28 @@ services:
     container_name: "proxy"
     image: "proxy"
     build: "./proxy"
-    networks: 
+    networks:
       - default
 
   web:
     container_name: "backend"
     image: "backend"
     build: "./code"
-    links: 
+    links:
       - postgres
     ports:
       - "5000:5000"
-    volumes: 
+    volumes:
       - './code:/code'
-    networks: 
+    networks:
       - default
     depends_on:
-      - postgres 
-  
+      - postgres
+
   postgres:
     container_name: "postgres"
     image: "postgres:10"
-    environment: 
+    environment:
       - POSTGRES_PASSWORD=admin_dip
       - POSTGRES_USER=admin_dip
       - POSTGRES_DB=dipdb
@@ -34,25 +34,8 @@ services:
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - 5439:5432
-    networks: 
+    networks:
       - default
-    
-  # firefox-driver:
-  #   container_name: "firefox-driver"
-  #   image: selenium/standalone-firefox:85.0
-  #   environment: 
-  #     - https_proxy=socks5://proxy:9050
-  #     - HTTPS_PROXY=socks5://proxy:9050
-  #     - http_proxy=socks5://proxy:9050
-  #     - HTTP_PROXY=socks5://proxy:9050
-  #     - no_proxy=
-  #     - NO_PROXY=
-  #   volumes:
-  #     - /dev/shm:/dev/shm
-  #   ports:
-  #     - 4455:4455
-  #   networks:
-  #     - default
 
   chrome-driver:
     container_name: "chrome-driver"
@@ -61,5 +44,14 @@ services:
       - /dev/shm:/dev/shm
     ports:
       - 4444:4444
+    networks:
+      - default
+
+  lookup:
+    container_name: "lookup"
+    image: "lookup"
+    build: "./services"
+    ports:
+      - 8888:8888
     networks:
       - default
