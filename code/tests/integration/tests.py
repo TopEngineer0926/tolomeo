@@ -29,17 +29,6 @@ def test_detective_investigate_with_default():
     detective = Detective()
     assert None == detective.investigate()
 
-# # run safe
-# def test_detective_investigate_with_a_list_of_urls_and_keywords(caplog):
-#     caplog.set_level(logging.INFO)
-#     urls = ['https://www.facebookcorewwwi.onion/'] #http://zqktlwi4fecvo6ri.onion/wiki/index.php/Main_Page # hidden wiki
-#     detective = Detective()
-#     evidence = detective.investigate(urls_list=urls, keywords=['drug', 'porn'])[0]
-#     repo_client=Repository(adapter=PostgresRepository)
-#     db_evidence = repo_client.find_evidence(evidence['uuid'])
-#     assert evidence['uuid'] == db_evidence[0]
-#     assert urls[0] == db_evidence[8]
-
 def test_detective_return_none_if_steps_are_over(caplog):
     caplog.set_level(logging.INFO)
     urls = ['https://www.facebookcorewwwi.onion/'] #http://zqktlwi4fecvo6ri.onion/wiki/index.php/Main_Page # hidden wiki
@@ -71,12 +60,12 @@ def test_detective_return_none_if_url_already_scraped_and_was_only_one(caplog):
     repo_client.delete_evidence(puppet_uuid)
     assert None == evidence
     
-# # run safe
+# # TODO: edit test to check by url on db
 # def test_detective_investigate_snowball(caplog):
 #     caplog.set_level(logging.INFO)
 #     urls = ['http://dirnxxdraygbifgc.onion'] #http://zqktlwi4fecvo6ri.onion/wiki/index.php/Main_Page # hidden wiki
 #     detective = Detective()
-#     evidence = detective.investigate(urls_list=urls, keywords=['cocaina','eroina','purezza'], total_steps=2)[0]
+#     detective.investigate(urls_list=urls, keywords=['cocaina','eroina','purezza'], total_steps=2)
 #     repo_client=Repository(adapter=PostgresRepository)
 #     db_evidence = repo_client.find_evidence(evidence['uuid'])
 #     assert evidence['uuid'] == db_evidence[0]

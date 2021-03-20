@@ -90,9 +90,10 @@ def get_keywords_match(driver, keywords):
     keywords_found = []
     for keyword in keywords:
         elems = get_keyword_match_by_text(driver, keyword)
-        keywords_found.append({
-            keyword: elems
-        })
+        if len(elems)>0:
+            keywords_found.append({
+                keyword: elems
+            })
     return keywords_found
 
 def get_keyword_match_by_text(driver, search):

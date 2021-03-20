@@ -90,7 +90,8 @@ def get_keywords_match(response, keywords):
     keywords_found = []
     for keyword in keywords:
         elems = soup.find_all(string=re.compile(keyword,re.IGNORECASE + re.MULTILINE + re.DOTALL))
-        keywords_found.append({
-            keyword: elems
-        })
+        if len(elems)>0:
+            keywords_found.append({
+                keyword: elems
+            })
     return keywords_found
