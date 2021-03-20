@@ -26,6 +26,9 @@ class Repository(object):
   def find_evidence_by_url(self, url):
     return self.client.find_evidence_by_url(url)
   
+  def delete_evidence(self, uuid):
+    return self.client.delete_evidence(uuid)
+  
   def get_evidences(self):
     return self.client.get_evidences()
   

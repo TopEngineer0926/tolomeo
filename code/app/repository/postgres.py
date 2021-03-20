@@ -55,6 +55,16 @@ class PostgresRepository(object):
         counter = cursor.fetchone()[0]
         cursor.close()
         return counter > 0
+    
+    def delete_evidence(self, uuid):
+        cursor = self.connection.cursor()
+        query = '''
+        DELETE FROM evidences WHERE uuid = '{}'
+        '''.format(uuid)
+        cursor.execute(query)
+        self.connection.commit()
+        cursor.close()
+        return cursor.rowcount
 
     def get_evidences(self):
         cursor = self.connection.cursor()
@@ -193,3 +203,6 @@ class PostgresRepository(object):
         version = cursor.fetchone()
         cursor.close()
         return version
+
+    def __sanitize_string_for_insert(body):
+        return re.sub(r'[^a-zA-Z\s?!,;:.{}\/"\[\]]+', '', json.dumps(body))
