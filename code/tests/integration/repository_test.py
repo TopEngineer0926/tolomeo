@@ -75,3 +75,39 @@ def test_repo_get_map(caplog):
     repo_client.save_evidence(puppet_evidence)
     evidences_map = repo_client.get_evidences_map(None)
     assert 0 < len(evidences_map)
+
+def test_limit_of_get_evidences(caplog):
+    caplog.set_level(logging.INFO)
+    repo_client=Repository(adapter=PostgresRepository)
+    parent = str(uuid.uuid4())
+    puppet_evidence = {
+        'uuid': parent,
+        'parent': None,
+        'keywords': ','.join(['drug', 'porn']),
+        'source': "website",
+        'step': 1,
+        'total_steps': 2,
+        "url": "https://www.facebookcorewwwi.onion/",
+        "title": "",
+        "urls_found": [],
+        "urls_queryable": [],
+        "keywords_found": [],
+    }
+    repo_client.save_evidence(puppet_evidence)
+
+    puppet_evidence = {
+        'uuid': str(uuid.uuid4()),
+        'parent': parent,
+        'keywords': ','.join(['drug', 'porn']),
+        'source': "website",
+        'step': 2,
+        'total_steps': 2,
+        "url": "https://www.facebookcorewwwi.onion/",
+        "title": "",
+        "urls_found": [],
+        "urls_queryable": [],
+        "keywords_found": [],
+    }
+    repo_client.save_evidence(puppet_evidence)
+    evidences = repo_client.get_evidences(1)
+    assert 1 == len(evidences)

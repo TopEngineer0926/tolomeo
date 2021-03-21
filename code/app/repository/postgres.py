@@ -65,12 +65,16 @@ class PostgresRepository(object):
         cursor.close()
         return cursor.rowcount
 
-    def get_evidences(self):
+    def get_evidences(self, limit=10, page=1):
         cursor = self.connection.cursor()
+        limits = self.__use_limit_and_offset(limit=limit, page=page)
+        limit_query = 'LIMIT '+ str(limits['limit'])
+        offset_query = 'OFFSET ' + str(limits['offset'])
         query = '''
         SELECT uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url, step, total_steps FROM evidences
         ORDER BY step, created
-        '''
+        {} {}
+        '''.format(limit_query, offset_query)
         cursor.execute(query)
         rows = cursor.fetchall()
         response = []
@@ -93,13 +97,17 @@ class PostgresRepository(object):
         cursor.close()
         return response
 
-    def get_evidences_map(self, uuid=None):
+    def get_evidences_map(self, uuid=None, limit=10, page=1):
         where = ""
         if uuid:
             where = "where e.uuid = '{}'".format(uuid)
         else:
             where = "where e.step = 1"
-        
+
+        limits = self.__use_limit_and_offset(limit=limit, page=page)
+        limit_query = 'LIMIT '+ str(limits['limit'])
+        offset_query = 'OFFSET ' + str(limits['offset'])
+
         cursor = self.connection.cursor()
         query = '''
         select
@@ -110,8 +118,8 @@ class PostgresRepository(object):
             e.parent
         from
             evidences e
-        {}
-        '''.format(where)
+        {} {} {}
+        '''.format(where, limit_query, offset_query)
         cursor.execute(query)
         rows = cursor.fetchall()
         response = []
@@ -201,3 +209,15 @@ class PostgresRepository(object):
         if not isinstance(body, str):
             variable = json.dumps(variable)
         return re.sub(r'[^a-zA-Z\s?!,;:.{}\/"\[\]]+', '', variable)
+
+    def __use_limit_and_offset(self, limit=10, page=1):
+        if page <=1:
+            return {
+                'limit': limit,
+                'offset': 0,
+            }
+
+        return {
+            'limit': limit,
+            'offset': 0 if 1==page else ((page-1)*limit+1)
+        }
