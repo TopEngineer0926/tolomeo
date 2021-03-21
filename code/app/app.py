@@ -3,6 +3,7 @@ from flask import Flask, json, g, request
 from pymongo import MongoClient, errors
 from app.scraper.service import Service
 from flask_cors import CORS
+from flask import request
 from app.http.middleware.authentication_middleware import AuthenticationMiddleware
 
 app = Flask(__name__)
@@ -39,11 +40,15 @@ def crawl():
 
 @app.route('/evidences')
 def get_evidences():
-    return json_response(Service().get_evidences())
+    limit = request.args.get('limit',default=10)
+    page = request.args.get('page',default=1)
+    return json_response(Service().get_evidences(limit, page))
 
 @app.route('/map/<uuid>', methods=["GET"])
 def get_evidences_map(uuid):
-    return json_response(Service().get_evidences_map(uuid))
+    limit = request.args.get('limit',default=10)
+    page = request.args.get('page',default=1)
+    return json_response(Service().get_evidences_map(uuid, limit, page))
 
 @app.route('/map', methods=["GET"])
 def get_evidences_map_first():
