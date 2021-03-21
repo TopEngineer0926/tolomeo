@@ -162,13 +162,6 @@ class PostgresRepository(object):
         self.connection.commit()
         cursor.close()
         return cursor.rowcount
-
-    def version(self):
-        cursor = self.connection.cursor()
-        cursor.execute("SELECT version();")
-        version = cursor.fetchone()
-        cursor.close()
-        return version
     
     def __get_children(self, uuid=None):
         if None == uuid:

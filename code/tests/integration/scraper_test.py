@@ -1,151 +1,95 @@
-import os
-import logging
+import unittest
+from unittest import result
 import requests
-import socket
-import socks
-from bs4 import BeautifulSoup
-from stem import Signal
-from stem.control import Controller
-import time
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.webdriver.common.proxy import Proxy, ProxyType
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
+from http import client
+import logging
+import sys
+import json
+import os
+import uuid
+from app.scraper.service import Service
+from app.scraper.detective import Detective
+from app.scraper.schema import UserSchema
+from app.repository import Repository
+from app.repository.postgres import PostgresRepository
 
-logging.getLogger().setLevel(logging.INFO)
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+handler = logging.StreamHandler(sys.stdout)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
-BASE_URL = 'http://www.example.com/'
-P= "5+Z4X6zxgc^pQNDSyb*%-b9d5*p_u^35ZyB_A5*D"
+    ## make sure it's working
+def test_true():
+    a = True
+    assert True == a, "Must Be true"
 
-proxies = {
-    'http': 'socks5h://proxy:9050',
-    'https': 'socks5h://proxy:9050'
-}
+def test_detective_investigate_with_default():
+    detective = Detective()
+    assert None == detective.investigate()
 
+def test_detective_return_none_if_steps_are_over(caplog):
+    caplog.set_level(logging.INFO)
+    urls = ['https://www.facebookcorewwwi.onion/'] #http://zqktlwi4fecvo6ri.onion/wiki/index.php/Main_Page # hidden wiki
+    detective = Detective()
+    evidence = detective.investigate(urls_list=urls, keywords=['drug', 'porn'], step=2, total_steps=1)
+    assert None == evidence
 
-def test_ip_change_requests():
-    logging.info('-----------------Using requests-----------------')
-    url = "https://icanhazip.com/" 
-    headers = {
-        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
+def test_detective_return_none_if_url_already_scraped_and_was_only_one(caplog):
+    caplog.set_level(logging.INFO)
+    repo_client=Repository(adapter=PostgresRepository)
+    puppet_uuid = str(uuid.uuid4())
+    puppet_evidence = {
+        'uuid': puppet_uuid,
+        'parent': None,
+        'keywords': ','.join(['drug', 'porn']),
+        'source': "website",
+        'step': 1,
+        'total_steps': 1,
+        "url": "https://www.facebookcorewwwi.onion/",
+        "title": "",
+        "urls_found": [],
+        "urls_queryable": [],
+        "keywords_found": [],
     }
+    repo_client.save_evidence(puppet_evidence)
+    urls = ['https://www.facebookcorewwwi.onion/'] #http://zqktlwi4fecvo6ri.onion/wiki/index.php/Main_Page # hidden wiki
+    detective = Detective()
+    evidence = detective.investigate(urls_list=urls, keywords=['drug', 'porn'])
+    repo_client.delete_evidence(puppet_uuid)
+    assert None == evidence
     
-    change_ip()
-    response = requests.get(url, proxies=proxies, headers=headers)
-    print_ip(response.text)
-    old_ip = response.text
-    new_ip = old_ip
+# # TODO: edit test to check by url on db
+# def test_detective_investigate_snowball(caplog):
+#     caplog.set_level(logging.INFO)
+#     urls = ['http://dirnxxdraygbifgc.onion'] #http://zqktlwi4fecvo6ri.onion/wiki/index.php/Main_Page # hidden wiki
+#     detective = Detective()
+#     detective.investigate(urls_list=urls, keywords=['cocaina','eroina','purezza'], total_steps=2)
+#     repo_client=Repository(adapter=PostgresRepository)
+#     db_evidence = repo_client.find_evidence(evidence['uuid'])
+#     assert evidence['uuid'] == db_evidence[0]
+#     assert urls[0] == db_evidence[8]
 
-    seconds = 0
-    while old_ip == new_ip:
-        seconds = seconds + 2
-        change_ip()
-        time.sleep(2)
-        response = requests.get(url, proxies=proxies, headers=headers)
-        print_ip(response.text)
-        new_ip = response.text
-    print_ip(new_ip + ' cambiato in secondi:' + str(seconds))
-    logging.info('-----------------Closing requests-----------------')
+def test_service_creates_new_user():
+    user_repo = UserSchema().load({'email': 'pippo@email.com'})
+    response = Service().create_user(user_repo)
+    assert 'pippo@email.com' == response['email']
 
-def test_ip_change_firefox():
-    logging.info('-----------------Using firefox-----------------')
-    url = "https://icanhazip.com/" 
-    
-    change_ip()
-    response = remote_web_driver(url)
-    print_ip(response)
-    old_ip = response
-    new_ip = old_ip
+    users = Service().find_all_users('pippo@email.com')
+    assert len(users) > 0
 
-    seconds = 0
-    while old_ip == new_ip:
-        seconds = seconds + 2
-        change_ip()
-        time.sleep(2)
-        response = remote_web_driver(url)
-        print_ip(response)
-        new_ip = response
-    print_ip(new_ip + ' cambiato in secondi:' + str(seconds))
-    logging.info('-----------------Closing firefox-----------------')
+    deleted = Service().delete_user_for('pippo@email.com')
+    assert True == deleted
 
-def test_ip_change_chrome():
-    logging.info('-----------------Using Chrome-----------------')
-    #url = "https://www.facebookcorewwwi.onion/" 
-    url = "http://6dyi4t72u7y6g763.onion/proxy/index.php?proxy_url=aHR0cDovL2x1c3RhZHVsdGVyeS5jb20=" #torlinkbgs6aabns.onion
-    change_ip()
-    response = remote_web_driver_chrome(url)
-    print_ip(response)
-    old_ip = response
-    new_ip = old_ip
+def test_creates_postgres_user():
+    service = Service(repo_client=Repository(adapter=PostgresRepository))
+    user_repo = UserSchema().load({'email': 'pippo@email.com'})
+    response = service.create_user(user_repo)
+    assert 'pippo@email.com' == response['email']
 
-    # seconds = 0
-    # while old_ip == new_ip:
-    #     seconds = seconds + 2
-    #     change_ip()
-    #     time.sleep(2)
-    #     response = remote_web_driver_chrome(url)
-    #     print_ip(response)
-    #     new_ip = response
-    # print_ip(new_ip + ' cambiato in secondi:' + str(seconds))
-    logging.info('-----------------Closing Chrome-----------------')
+    users = service.find_all_users('pippo@email.com')
+    assert len(users) > 0
 
-
-def print_ip(html):
-    soup = BeautifulSoup(html, 'html.parser')
-    logging.info(html)
-    #logging.info(soup.find_all("span"))
-
-def change_ip():
-    host_ip = socket.gethostbyname('proxy')
-    s = socket.socket()
-    s.connect((host_ip, 9051))
-    s.send(('AUTHENTICATE "'+P+'"\r\nSIGNAL NEWNYM\r\n').encode())
-    s.close()
-
-#not working ip rotation
-def remote_web_driver(url):
-    options = webdriver.FirefoxOptions()
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument('--headless')
-    options.add_argument('--proxy=socks5://proxy:9050')
-
-    
-    driver = webdriver.Remote(
-            desired_capabilities=DesiredCapabilities.FIREFOX,
-            command_executor="http://firefox-driver:4444",
-            options=options
-            #proxy=proxy
-        )
-    driver.get(url)
-    response = driver.page_source
-    driver.quit()
-    return response
-
-#working ip rotation
-def remote_web_driver_chrome(url):
-    PROXY = 'socks5://proxy:9050'
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
-    options.add_argument('--proxy-server=%s' % PROXY)
-
-    
-    driver = webdriver.Remote(
-            desired_capabilities=DesiredCapabilities.CHROME,
-            command_executor="http://chrome-driver:4444",
-            options=options
-        )
-    driver.get(url)
-    a_elements = driver.find_element_by_tag_name('a')
-    response = driver.page_source
-    driver.quit()
-    return response
-    
-if __name__ == "__main__":
-#    test_ip_change_requests()
-    # test_ip_change_firefox()
-    test_ip_change_chrome()
+    deleted = service.delete_user_for('pippo@email.com')
+    assert True == deleted

@@ -14,9 +14,6 @@ class Repository(object):
   def delete(self, selector):
     return self.client.delete(selector)
   
-  def version(self):
-    return self.client.version()
-  
   def save_evidence(self, evidence):
     return self.client.save_evidence(evidence)
   
