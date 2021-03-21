@@ -1,5 +1,15 @@
-version: "3"
+version: '3.7'
+
 services:
+
+  frontend-prod:
+    container_name: frontend-prod
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    ports:
+      - '80:80'
+  
   proxy:
     container_name: "proxy"
     image: "proxy"
@@ -46,20 +56,6 @@ services:
       - 4444:4444
     networks:
       - default
-  
-  frontend:
-    container_name: frontend
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    volumes:
-      - './frontend:/app'
-      - 'frontend/app/node_modules'
-    ports:
-      - 3001:3000
-    environment:
-      - CHOKIDAR_USEPOLLING=true  
-    stdin_open: true   
 
   lookup:
     container_name: "lookup"

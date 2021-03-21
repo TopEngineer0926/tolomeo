@@ -16,3 +16,6 @@ To set all your containers up:
 Simply run `make scan onion_site=fakesite.onion` specifying the *onion_site* to be scan and you will get an export of vulnerabilities of the site in *scan_result.log* file.
 
 We use Onionscan for the purpose, please see https://onionscan.org/ for more info.
+
+## In production
+Build everything running `make up-production`and go to *localhost:80*...enjoy!

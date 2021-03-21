@@ -10,7 +10,10 @@ halt: ## stop containers
 	@docker-compose down --remove-orphans
 
 up: ## run containers
-	@docker-compose up -d
+	@docker-compose -f docker-compose.yml up -d
+
+up-production: ## run containers
+	@docker-compose -f docker-compose.prod.yml up -d --build
 
 shell: ## Enter the backend container python
 	@docker exec -it backend bash
