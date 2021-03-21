@@ -12,7 +12,7 @@ RUN mkdir -p ${GOPATH}/src ${GOPATH}/bin
 WORKDIR $GOPATH
 
 COPY . /services/
-WORKDIR /services/onionscan
+WORKDIR /services/
 
 # configure onionscan
 RUN go get github.com/HouzuoGuo/tiedot
@@ -32,12 +32,9 @@ RUN echo '@edge http://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk
 
 COPY torrc /etc/tor/
 
-EXPOSE 9050 9051 9053 8888
+EXPOSE 9050 9051 9053
 
 HEALTHCHECK --timeout=10s --start-period=60s \
     CMD curl --fail --socks5-hostname localhost:9050 -I -L 'https://www.facebookcorewwwi.onion/' || exit 1
 
 CMD ["/usr/bin/tor", "-f", "/etc/tor/torrc"]
-# EXPOSE 8080
-
-# CMD ["onionscan", "--mode=analysis", "--webport=8888", "--verbose", "--torProxyAddress=proxy:9050"]
