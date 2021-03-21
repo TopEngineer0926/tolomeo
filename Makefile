@@ -12,9 +12,6 @@ halt: ## stop containers
 up: ## run containers
 	@docker-compose up -d
 
-up-frontend: ## This will run npm locally on port 3000
-	@cd frontend/dip && npm start
-
 shell: ## Enter the backend container python
 	@docker exec -it backend bash
 

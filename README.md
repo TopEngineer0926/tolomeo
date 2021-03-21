@@ -12,10 +12,6 @@ In order to start the project locally you need to know what is in the Makefile:
 To set all your containers up:
 - run `make up`.
 
-For the frontend you need to install `npm` in you machine, then navigate to *frontend/dip* folder:
-- run `npm install`,
-- To start the frontend run `npm start` or in project root folder run `make up-frontend`.
-
 ## Scan the found onion site
 Simply run `make scan onion_site=fakesite.onion` specifying the *onion_site* to be scan and you will get an export of vulnerabilities of the site in *scan_result.log* file.
 
