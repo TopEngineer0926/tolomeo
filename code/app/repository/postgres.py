@@ -67,7 +67,7 @@ class PostgresRepository(object):
 
     def get_evidences(self, limit=10, page=1):
         cursor = self.connection.cursor()
-        limits = self.__use_limit_and_offset(limit=limit, page=page)
+        limits = self.__use_limit_and_offset(limit=int(limit), page=int(page))
         limit_query = 'LIMIT '+ str(limits['limit'])
         offset_query = 'OFFSET ' + str(limits['offset'])
         query = '''
@@ -104,7 +104,7 @@ class PostgresRepository(object):
         else:
             where = "where e.step = 1"
 
-        limits = self.__use_limit_and_offset(limit=limit, page=page)
+        limits = self.__use_limit_and_offset(limit=int(limit), page=int(page))
         limit_query = 'LIMIT '+ str(limits['limit'])
         offset_query = 'OFFSET ' + str(limits['offset'])
 
