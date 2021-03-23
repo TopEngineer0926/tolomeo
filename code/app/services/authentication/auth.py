@@ -1,15 +1,13 @@
 import datetime
 import logging
 import sys
-
+import os
 import jwt
 
 
 class Auth(object):
     def __init__(self, *args):
-        self.secret_key = (
-            "\x9a\xd6\xd8\xd9|\x82\xc1p\x8e\xc8\x822\xe0\xe0\x9fT\x0c\x15;\x8cF\x82Y1"
-        )
+        self.secret_key = os.environ.get("API_SECRET")
 
     def generate_token_for_user_id(self, user_id):
         return self.encode_auth_token(user_id)

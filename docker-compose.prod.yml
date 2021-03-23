@@ -21,6 +21,8 @@ services:
     container_name: "backend"
     image: "backend"
     build: "./code"
+    env_file:
+      - ./code/.env
     links:
       - postgres
     ports:

@@ -11,7 +11,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 logging.getLogger().setLevel(logging.INFO)
 
-P = "5+Z4X6zxgc^pQNDSyb*%-b9d5*p_u^35ZyB_A5*D"
+P = os.environ.get("PROXY_PASSWORD")
 
 
 def scrape(url, keywords=[]):
@@ -43,22 +43,22 @@ def scrape(url, keywords=[]):
 
 
 def change_ip():
-    host_ip = socket.gethostbyname("proxy")
+    host_ip = socket.gethostbyname(os.environ.get("PROXY_HOST"))
     s = socket.socket()
-    s.connect((host_ip, 9051))
+    s.connect((host_ip, os.environ.get("PROXY_PORT")))
     s.send(('AUTHENTICATE "' + P + '"\r\nSIGNAL NEWNYM\r\n').encode())
     s.close()
 
 
 # working ip rotation
 def remote_web_driver_chrome(url):
-    PROXY = "socks5h://proxy:9050"
+    PROXY = os.environ.get("PROXY_SOCK")
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     options.add_argument("--proxy-server=%s" % PROXY)
     driver = webdriver.Remote(
         desired_capabilities=DesiredCapabilities.CHROME,
-        command_executor="http://chrome-driver:4444",
+        command_executor=os.environ.get("COMMAND_EXECUTOR"),
         options=options,
     )
     return driver

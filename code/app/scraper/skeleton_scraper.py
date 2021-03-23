@@ -11,13 +11,13 @@ from bs4 import BeautifulSoup
 
 logging.getLogger().setLevel(logging.INFO)
 
-proxies = {"http": "socks5h://proxy:9050", "https": "socks5h://proxy:9050"}
+proxies = {"http": os.environ.get("PROXY_SOCK"), "https": os.environ.get("PROXY_SOCK")}
 
 headers = {
     "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36",
 }
 
-P = "5+Z4X6zxgc^pQNDSyb*%-b9d5*p_u^35ZyB_A5*D"
+P = os.environ.get("PROXY_PASSWORD")
 
 
 def scrape(url, keywords=[]):
@@ -48,9 +48,9 @@ def scrape(url, keywords=[]):
 
 
 def change_ip():
-    host_ip = socket.gethostbyname("proxy")
+    host_ip = socket.gethostbyname(os.environ.get("PROXY_HOST"))
     s = socket.socket()
-    s.connect((host_ip, 9051))
+    s.connect((host_ip, os.environ.get("PROXY_PORT")))
     s.send(('AUTHENTICATE "' + P + '"\r\nSIGNAL NEWNYM\r\n').encode())
     s.close()
 

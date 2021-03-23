@@ -6,20 +6,16 @@ import psycopg2
 from flask import json
 from psycopg2 import Error
 
-COLLECTION_NAME = "users"
-DOMAIN = "mongodb"
-PORT = 27017
-
 
 class PostgresRepository(object):
     def __init__(self):
         try:
             self.connection = psycopg2.connect(
-                user="admin_dip",
-                password="admin_dip",
-                host="postgres",
-                port="5432",
-                database="dipdb",
+                user=os.environ.get("DB_USER"),
+                password=os.environ.get("DB_PASSWORD"),
+                host=os.environ.get("DB_HOST"),
+                port=os.environ.get("DB_PORT"),
+                database=os.environ.get("DB_NAME"),
             )
 
         except (Exception, Error) as error:

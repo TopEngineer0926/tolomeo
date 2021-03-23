@@ -1,5 +1,6 @@
-from functools import wraps
+import os
 
+from functools import wraps
 from app.scraper.schema import UserSchema
 from app.scraper.service import Service
 from app.services.authentication.auth import Auth
@@ -28,7 +29,10 @@ def auth_decorator(function):
 def login():
     try:
         data = json.loads(request.data)
-        if "test@email.com" != data["email"] or "testpassword" != data["password"]:
+        if (
+            os.environ.get("APP_EMAIL") != data["email"]
+            or os.environ.get("APP_PASSWORD") != data["password"]
+        ):
             return json_response("Unauthorized", 403)
 
         return json_response(
