@@ -98,12 +98,7 @@ const EvidenceTable = (props) => {
         AdminService.getEvidences(dataList[limit], page)
             .then(
                 response => {
-                    if (response.data.code !== 200) {
-                        console.error(response.data.message);
-                    } else {
-                        localStorage.setItem("token", JSON.stringify(response.data.data.token));
-                        setEvidences(response.data.data);
-                    }
+                    setEvidences(response.data);
                 },
                 error => {
                     console.error("Can't connect to the Server!");

@@ -93,17 +93,13 @@ const EvidenceChart = (props) => {
         AdminService.getCharts(dataList[limit], page)
             .then(
                 response => {
-                    if (response.data.code !== 200) {
-                        console.error(response.data.message);
-                    } else {
-                        localStorage.setItem("token", JSON.stringify(response.data.data.token));
                         const data = {
                             name: "Partenza",
                             attributes: {
                                 step: 0,
                                 keywords_found: null,
                             },
-                            children: response.data.data.map(
+                            children: response.data.map(
                                 item => {
                                     return {
                                         name: item.url,
@@ -126,7 +122,6 @@ const EvidenceChart = (props) => {
                             )
                         }
                         setEvidences(data);
-                    }
                 },
                 error => {
                     console.error("Can't connect to the Server!");
