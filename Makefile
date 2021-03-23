@@ -10,7 +10,7 @@ halt: ## stop containers
 	@docker-compose down --remove-orphans
 
 env-frontend:
-	@cp frontend/.env.example frontend/.env
+	@cp frontend/.env.sample frontend/.env
 
 up: ## run containers
 	@docker-compose -f docker-compose.yml up -d
