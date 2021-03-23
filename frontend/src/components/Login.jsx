@@ -1,4 +1,4 @@
-import React from 'react';
+import {React, useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -13,7 +13,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom'
-
+import AdminService from '../services/api.js';
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -60,10 +60,36 @@ const useStyles = makeStyles((theme) => ({
 export default function Login() {
   const classes = useStyles();
   const history = useHistory();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleChangeEmail = (event) => {
+      setEmail(event.target.value);
+  }
+  const handleChangePassword = (event) => {
+      setPassword(event.target.value);
+  }
 
   const handleLogin = () => {
     /* Perform login and then navigate to evidences or home */
-      history.push("/evidences")
+    var data = {};
+    data['email'] = email;
+    data['password'] = password;
+    AdminService.login(data)
+      .then(
+        response => {
+          if (response.data.code !== 200) {
+            console.error(response.data.message);
+          } else {
+            localStorage.setItem("token", JSON.stringify(response.data.data.token));
+            history.push("/evidences");
+          }
+        },
+        error => {
+          console.error("Can't connect to the Server!");
+          history.push("/evidences");
+        }
+      );
   };
 
   return (
@@ -89,6 +115,8 @@ export default function Login() {
               name="email"
               autoComplete="email"
               autoFocus
+              value={email}
+              onChange={handleChangeEmail}
             />
             <TextField
               variant="outlined"
@@ -100,6 +128,8 @@ export default function Login() {
               type="password"
               id="password"
               autoComplete="current-password"
+              value={password}
+              onChange={handleChangePassword}
             />
             {/* <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
