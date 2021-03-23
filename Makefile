@@ -1,4 +1,4 @@
-@phony: up down shell-mongo shell dump-init test-integration test
+@phony: up down shell-mongo shell dump-init test-integration test env-frontend
 
 help: ## show this help
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
@@ -9,10 +9,13 @@ build: ## Rebuild the image locally to "backend"
 halt: ## stop containers
 	@docker-compose down --remove-orphans
 
+env-frontend:
+	@cp frontend/.env.example frontend/.env
+
 up: ## run containers
 	@docker-compose -f docker-compose.yml up -d
 
-up-production: ## run containers
+up-production: env-frontend ## run containers
 	@docker-compose -f docker-compose.prod.yml up -d --build
 
 shell: ## Enter the backend container python
