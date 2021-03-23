@@ -5,10 +5,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import {BrowserRouter as Router, Link as RouterLink, Route, Switch} from 'react-router-dom'
-import EvidenceTable from './EvidenceTable'
-import Login from './Login';
-import EvidenceChart from './EvidenceChart';
 import NavMenu from './NavMenu';
+import Routes from '../Routes.js';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,20 +40,7 @@ export default function Navigator() {
           <div className={classes.offset} />
         </AppBar>
         <Toolbar>{/* content */}</Toolbar>
-        <Switch>
-          <Route path="/evidences">
-            <EvidenceTable></EvidenceTable>
-          </Route>
-          <Route path="/map">
-            <EvidenceChart></EvidenceChart>
-          </Route>
-          <Route path="/login">
-            <Login></Login>
-          </Route>
-          <Route path="/">
-            Questo è l'ingresso dell'applicazione, effettua il login in alto a destra! {/*Define a home page */}
-          </Route>
-        </Switch>
+        <Routes />
       </Router>
     </div>
   );
