@@ -12,6 +12,13 @@ In order to start the project locally you need to know what is in the Makefile:
 To set all your containers up:
 - run `make up`.
 
+### Code formatting
+
+For python I suggest to download black and use in *code* folder:
+- run `pip install black` on a terminal (you must have it installed)
+- run `black {source_directory_or_file}`, eg `black code/`
+
+
 ## Scan the found onion site
 Simply run `make scan onion_site=fakesite.onion` specifying the *onion_site* to be scan and you will get an export of vulnerabilities of the site in *scan_result.log* file.
 
