@@ -10,12 +10,12 @@ halt: ## stop containers
 	@docker-compose down --remove-orphans
 
 env-frontend:
-	@cp frontend/.env.sample frontend/.env
+	@cp -n frontend/.env.sample frontend/.env
 
-up: ## run containers
+up: env-frontend## run containers
 	@docker-compose -f docker-compose.yml up -d
 
-up-production: env-frontend ## run containers
+up-production: ## run containers for production with build
 	@docker-compose -f docker-compose.prod.yml up -d --build
 
 shell: ## Enter the backend container python
