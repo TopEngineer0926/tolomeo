@@ -1,5 +1,6 @@
 from marshmallow import Schema, fields
 
+
 class ScraperSchema(Schema):
     uuid = fields.Str(required=True)
     source_type = fields.Str()
@@ -11,6 +12,7 @@ class ScraperSchema(Schema):
     keyword_to_search = fields.Str()
     keyword_match = fields.Str()
     urls = fields.Str()
+
 
 class UserSchema(Schema):
     uuid = fields.Str()
