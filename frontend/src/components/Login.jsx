@@ -78,16 +78,15 @@ export default function Login() {
     AdminService.login(data)
       .then(
         response => {
-          if (response.data.code !== 200) {
+          if (response.data.status !== "success") {
             console.error(response.data.message);
           } else {
-            localStorage.setItem("token", JSON.stringify(response.data.data.token));
+            localStorage.setItem("token", JSON.stringify(response.data.token));
             history.push("/evidences");
           }
         },
         error => {
           console.error("Can't connect to the Server!");
-          history.push("/evidences");
         }
       );
   };
@@ -136,7 +135,6 @@ export default function Login() {
               label="Ricordati di me"
             /> */}
             <Button
-              type="submit"
               fullWidth
               variant="contained"
               color="primary"
