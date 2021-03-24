@@ -1,4 +1,4 @@
-@phony: up down shell-mongo shell dump-init test-integration test env-frontend
+@phony: up down shell dump-init test-integration test env-frontend
 
 help: ## show this help
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'

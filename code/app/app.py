@@ -6,10 +6,11 @@ from app.scraper.service import Service
 from app.services.authentication.auth import Auth
 from flask import Flask, g, json, request
 from flask_cors import CORS
-from pymongo import MongoClient, errors
 
 app = Flask(__name__)
 CORS(app)
+
+PREFIX = "/api/v1"
 
 
 def auth_decorator(function):
@@ -25,7 +26,7 @@ def auth_decorator(function):
     return auth_wrapper
 
 
-@app.route("/login", methods=["POST"])
+@app.route(PREFIX + "/login", methods=["POST"])
 def login():
     try:
         data = json.loads(request.data)
@@ -42,18 +43,18 @@ def login():
         return json_response("Internal server error", 500)
 
 
-@app.route("/logout", methods=["POST"])
+@app.route(PREFIX + "/logout", methods=["POST"])
 @auth_decorator
 def logout():
     return json_response("Successfully logged out", 200)
 
 
-@app.route("/users/<email>", methods=["GET"])
+@app.route(PREFIX + "/users/<email>", methods=["GET"])
 def user(email):
     return json_response(Service().find_all_users(email))
 
 
-@app.route("/users/<email>", methods=["DELETE"])
+@app.route(PREFIX + "/users/<email>", methods=["DELETE"])
 def delete(email):
     if Service().delete_user_for(email):
         return json_response({})
@@ -61,7 +62,7 @@ def delete(email):
         return json_response({"error": "User not found"}, 404)
 
 
-@app.route("/users", methods=["POST"])
+@app.route(PREFIX + "/users", methods=["POST"])
 def create():
     try:
         user_repo = UserSchema().load(json.loads(request.data))
@@ -75,13 +76,13 @@ def create():
         return str(error)
 
 
-@app.route("/crawl", methods=["POST"])
+@app.route(PREFIX + "/crawl", methods=["POST"])
 @auth_decorator
 def crawl():
     return json_response("Scraper successfully started", 200)
 
 
-@app.route("/evidences", methods=["GET"])
+@app.route(PREFIX + "/evidences", methods=["GET"])
 @auth_decorator
 def get_evidences():
     limit = request.args.get("limit", default=10)
@@ -89,7 +90,7 @@ def get_evidences():
     return json_response(Service().get_evidences(limit, page))
 
 
-@app.route("/map/<uuid>", methods=["GET"])
+@app.route(PREFIX + "/map/<uuid>", methods=["GET"])
 @auth_decorator
 def get_evidences_map(uuid):
     limit = request.args.get("limit", default=10)
@@ -97,13 +98,13 @@ def get_evidences_map(uuid):
     return json_response(Service().get_evidences_map(uuid, limit, page))
 
 
-@app.route("/map", methods=["GET"])
+@app.route(PREFIX + "/map", methods=["GET"])
 @auth_decorator
 def get_evidences_map_first():
     return json_response(Service().get_evidences_map(None))
 
 
-@app.route("/")
+@app.route(PREFIX + "/")
 @auth_decorator
 def index():
     return "Not your lucky day!"

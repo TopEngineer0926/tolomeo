@@ -2,7 +2,6 @@ marshmallow==2.16.3
 pyjwt==1.4.2
 flask
 flask_cors
-pymongo
 pytest
 requests
 selenium
