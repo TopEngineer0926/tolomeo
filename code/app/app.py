@@ -101,7 +101,9 @@ def get_evidences_map(uuid):
 @app.route(PREFIX + "/map", methods=["GET"])
 @auth_decorator
 def get_evidences_map_first():
-    return json_response(Service().get_evidences_map(None))
+    limit = request.args.get("limit", default=10)
+    page = request.args.get("page", default=1)
+    return json_response(Service().get_evidences_map(None, limit, page))
 
 
 @app.route(PREFIX + "/")
