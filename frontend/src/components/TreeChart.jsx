@@ -9,6 +9,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
 
 const containerStyles = {
     width: "100vw",
@@ -40,9 +41,14 @@ const containerStyles = {
             </CardContent>
         </CardActionArea>
         <CardActions>
-            <Button size="small" color="primary">
-            Espandi
-            </Button>
+            <Grid item container justify="space-between">
+                <Grid item>
+                    <Button size="small" color="primary">Espandi</Button>
+                </Grid>
+                <Grid item>
+                    <Button size="small" color="primary">Riprendi da qui</Button>
+                </Grid>
+            </Grid>
         </CardActions>
         </Card>
       </foreignObject>
