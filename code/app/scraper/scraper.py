@@ -45,7 +45,7 @@ def scrape(url, keywords=[]):
 def change_ip():
     host_ip = socket.gethostbyname(os.environ.get("PROXY_HOST"))
     s = socket.socket()
-    s.connect((host_ip, os.environ.get("PROXY_PORT")))
+    s.connect((host_ip, int(os.environ.get("PROXY_PORT"))))
     s.send(('AUTHENTICATE "' + P + '"\r\nSIGNAL NEWNYM\r\n').encode())
     s.close()
 
