@@ -7,11 +7,12 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { makeStyles } from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,13 +37,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SearchDialog() {
 
-    const [rendered, setRendered] = React.useState('rendered');
-
-    const handleChange = (event) => {
-        setRendered(event.target.value);
-    };
-
     const [open, setOpen] = React.useState(false);
+    const [openSnackbar, setOpenSnackbar] = React.useState(false);
 
     const classes = useStyles();
 
@@ -54,16 +50,29 @@ export default function SearchDialog() {
         setOpen(false);
     };
 
+    const handleStart = () => {
+        setOpen(false);
+        setOpenSnackbar(true);
+    };
+
+    const handleCloseSnackbar = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+    
+        setOpenSnackbar(false);
+      };
+
     return (
         <div>
         <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-            Avvia Scraper
+            Avvia Programma
         </Button>
         <Dialog className={classes.root} open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Scraper</DialogTitle>
             <DialogContent>
             <DialogContentText>
-                Per lanciare lo scraper bisogna inserire una url di partenza, delle parole chiave divise da ',', numero di cicli.
+                Per lanciare lo scraper bisogna inserire una url di partenza, delle parole chiave divise da ',' e numero di cicli.
             </DialogContentText>
             <div>
                 <TextField
@@ -89,31 +98,24 @@ export default function SearchDialog() {
                     label="Numero di cicli"
                     type="number"
                 />
-                <FormControl className={classes.formControl}>
-                    <InputLabel id="demo-simple-select-label">Modalità</InputLabel>
-                    <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={rendered}
-                    onChange={handleChange}
-                    >
-                        <MenuItem value={"rendered"}>Renderizzato</MenuItem>
-                        <MenuItem value={"skeleton"}>Solo codice sorgente</MenuItem>
-                    </Select>
-                </FormControl>
             </div>
             
             
             </DialogContent>
             <DialogActions>
             <Button onClick={handleClose} color="primary">
-                Ritorna
+                Annulla
             </Button>
-            <Button onClick={handleClose} color="primary">
+            <Button onClick={handleStart} color="primary">
                 Avvia
             </Button>
             </DialogActions>
         </Dialog>
+        <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity="success">
+            Programma avviato correttamente...
+            </Alert>
+        </Snackbar>
         </div>
     );
 }
