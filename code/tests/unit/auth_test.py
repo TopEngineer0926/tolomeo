@@ -17,8 +17,6 @@ def test_auth_jwt_encode_and_decode():
     auth = Auth()
     user_id = 1
     encoded = auth.encode_auth_token(user_id)
-    logging.info(encoded)
 
     decoded = auth.decode_auth_token(encoded)
-    logging.info(decoded)
     assert user_id == decoded
