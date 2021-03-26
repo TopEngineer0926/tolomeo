@@ -17,6 +17,7 @@ services:
       - postgres
     ports:
       - "5000:5000"
+    command: flask run
     volumes:
       - './code:/code'
     networks:

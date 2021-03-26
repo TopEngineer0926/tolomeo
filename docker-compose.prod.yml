@@ -9,11 +9,13 @@ services:
       dockerfile: Dockerfile.prod
     ports:
       - '80:80'
+    restart: always
   
   proxy:
     container_name: "proxy"
     image: "proxy"
     build: "./proxy"
+    restart: always
     networks:
       - default
 
@@ -27,6 +29,8 @@ services:
       - postgres
     ports:
       - "5000:5000"
+    command: flask run
+    restart: always
     networks:
       - default
     depends_on:
@@ -44,6 +48,7 @@ services:
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - 5439:5432
+    restart: always
     networks:
       - default
 
@@ -54,6 +59,7 @@ services:
       - /dev/shm:/dev/shm
     ports:
       - 4444:4444
+    restart: always
     networks:
       - default
 
