@@ -7,6 +7,13 @@ from unittest import result
 import app.app as App
 import requests
 
+def test_health():
+    json_response = requests.get(
+        "http://0.0.0.0:5000/api/v1/health"
+    )
+    assert 200 == json_response.status_code
+    assert "OK" == json.loads(json_response.content)
+
 
 def test_login_gives_token():
     json_response = requests.post(

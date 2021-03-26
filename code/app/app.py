@@ -106,6 +106,11 @@ def get_evidences_map_first():
     return json_response(Service().get_evidences_map(None, limit, page))
 
 
+@app.route(PREFIX + "/health")
+def health_check():
+    return json_response("OK")
+
+
 @app.route(PREFIX + "/")
 @auth_decorator
 def index():
