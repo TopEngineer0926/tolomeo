@@ -69,3 +69,29 @@ services:
     build: "./services"
     networks:
       - default
+
+  redis:
+    container_name: "redis"
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-data-prod:/var/lib/redis
+
+  worker:
+    container_name: "worker"
+    image: "worker"
+    build: "./code"
+    env_file:
+      - ./code/.env.local
+    links:
+      - postgres
+    command: celery -A app.tasks worker --loglevel=info
+    volumes:
+      - './code:/code'
+      - './celery-queue-prod:/queue'
+    networks:
+      - default
+    depends_on:
+      - postgres
+      - redis
