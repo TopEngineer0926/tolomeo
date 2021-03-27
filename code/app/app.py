@@ -105,7 +105,7 @@ def crawl():
             "parent": data["parent"],
         },
     )
-    return json_response("Scraper successfully started:{}".format(task.id), 200)
+    return json_response("{}".format(task.id), 200)
 
 
 @app.route(PREFIX + "/evidences", methods=["GET"])
