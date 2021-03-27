@@ -4,3 +4,4 @@ postgres/
 services/onionscan/onionscandb
 scan_result.log
 redis-data/
+redis-data-prod/
