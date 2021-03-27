@@ -7,10 +7,9 @@ from unittest import result
 import app.app as App
 import requests
 
+
 def test_health():
-    json_response = requests.get(
-        "http://0.0.0.0:5000/api/v1/health"
-    )
+    json_response = requests.get("http://0.0.0.0:5000/api/v1/health")
     assert 200 == json_response.status_code
     assert "OK" == json.loads(json_response.content)
 
@@ -34,6 +33,16 @@ def test_login_gives_error_on_wrong_credentials():
 def test_get_evidences_gives_not_authenticated_without_token():
     json_response = requests.get(
         "http://0.0.0.0:5000/api/v1/evidences", params={"limit": 1, "page": 1}
+    )
+    assert 401 == json_response.status_code
+
+
+def test_get_evidences_gives_not_authenticated_with_expired_token():
+    token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MTY4NDA5NTgsImlhdCI6MTYxNjgzOTE1OCwic3ViIjoxfQ.blxFD9XbaC853qTIAMtQgoEM9aFY4o-eWNXDovMpwwY"
+    json_response = requests.get(
+        "http://0.0.0.0:5000/api/v1/evidences",
+        params={"limit": 1, "page": 1},
+        headers={"Authorization": "Bearer " + token},
     )
     assert 401 == json_response.status_code
 

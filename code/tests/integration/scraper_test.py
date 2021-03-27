@@ -64,7 +64,7 @@ def test_detective_return_none_if_url_already_scraped_and_was_only_one(caplog):
     detective = Detective()
     evidence = detective.investigate(urls_list=urls, keywords=["drug", "porn"])
     repo_client.delete_evidence(puppet_uuid)
-    assert None == evidence
+    assert True == evidence
 
 
 def test_service_creates_new_user():

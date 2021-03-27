@@ -9,3 +9,5 @@ stem
 bs4
 psycopg2
 PySocks
+celery
+redis

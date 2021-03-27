@@ -8,7 +8,6 @@ from app.repository import Repository
 from app.repository.postgres import PostgresRepository
 
 logging.getLogger().setLevel(logging.INFO)
-logging.basicConfig(filename="scraper.log")
 
 
 class Detective:
@@ -79,6 +78,7 @@ class Detective:
                 total_steps=total_steps,
                 render=render,
             )
+        return True
 
     def __already_scraped(self, url):
         return self.repo_client.find_evidence_by_url(url)

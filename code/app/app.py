@@ -1,4 +1,5 @@
 import os
+import celery.states as states
 
 from functools import wraps
 from app.scraper.schema import UserSchema
@@ -6,6 +7,8 @@ from app.scraper.service import Service
 from app.services.authentication.auth import Auth
 from flask import Flask, g, json, request
 from flask_cors import CORS
+from app.worker import celery
+
 
 app = Flask(__name__)
 CORS(app)
@@ -76,10 +79,33 @@ def create():
         return str(error)
 
 
+@app.route(PREFIX + "/check/<string:task_id>")
+@auth_decorator
+def check_task(task_id: str):
+    res = celery.AsyncResult(task_id)
+    if res.state == states.PENDING:
+        return res.state
+    else:
+        return str(res.result)
+
+
 @app.route(PREFIX + "/crawl", methods=["POST"])
 @auth_decorator
 def crawl():
-    return json_response("Scraper successfully started", 200)
+    data = json.loads(request.data)
+    # get params from request (data) and send to task
+    task = celery.send_task(
+        "tasks.investigate",
+        args=[],
+        kwargs={
+            "urls_list": tuple(data["urls"]),
+            "step": data["step"],
+            "total_steps": data["totalsteps"],
+            "keywords": tuple(data["keywords"]),
+            "parent": data["parent"],
+        },
+    )
+    return json_response("Scraper successfully started:{}".format(task.id), 200)
 
 
 @app.route(PREFIX + "/evidences", methods=["GET"])
