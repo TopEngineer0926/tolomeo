@@ -31,3 +31,9 @@ class Repository(object):
 
     def get_evidences_map(self, uuid, limit=10, page=1):
         return self.client.get_evidences_map(uuid, limit=limit, page=page)
+
+    def get_all_evidences_for_export(self):
+        return self.client.get_all_evidences_for_export()
+
+    def delete_all_evidences(self):
+        return self.client.delete_all_evidences()

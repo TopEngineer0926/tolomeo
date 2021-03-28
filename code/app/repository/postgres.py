@@ -81,6 +81,16 @@ class PostgresRepository(object):
         cursor.close()
         return cursor.rowcount
 
+    def delete_all_evidences(self):
+        cursor = self.connection.cursor()
+        query = """
+        DELETE FROM evidences
+        """
+        cursor.execute(query)
+        self.connection.commit()
+        cursor.close()
+        return True
+
     def get_evidences(self, limit=10, page=1):
         cursor = self.connection.cursor()
         limits = self.__use_limit_and_offset(limit=int(limit), page=int(page))
@@ -157,6 +167,17 @@ class PostgresRepository(object):
 
         cursor.close()
         return response
+
+    def get_all_evidences_for_export(self):
+        cursor = self.connection.cursor()
+        query = """
+        SELECT * FROM evidences
+        ORDER BY step, created
+        """
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        cursor.close()
+        return rows
 
     def find_all_users(self, selector):
         cursor = self.connection.cursor()

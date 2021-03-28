@@ -88,7 +88,7 @@ services:
       - postgres
     command: celery -A app.tasks worker --loglevel=info
     volumes:
-      - './code:/code'
+      - './code/workers:/code/workers'
       - './celery-queue-prod:/queue'
     networks:
       - default

@@ -22,7 +22,7 @@ P = os.environ.get("PROXY_PASSWORD")
 
 def scrape(url, keywords=[]):
     change_ip()
-    time.sleep(random.randint(1, 6))
+    time.sleep(random.randint(1, 3))
     try:
         response = requests.get(url, proxies=proxies, timeout=30)
         title = get_title(response)
@@ -41,9 +41,9 @@ def scrape(url, keywords=[]):
         return {
             "url": url,
             "title": "None",
-            "urls_found": "None",
-            "urls_queryable": "None",
-            "keywords_found": "None",
+            "urls_found": [],
+            "urls_queryable": [],
+            "keywords_found": [],
         }
 
 
