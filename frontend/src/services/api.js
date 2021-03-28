@@ -16,6 +16,9 @@ class AdminService {
     return axios.get(API_URL + 'map?limit=' + limit + '&page=' + page, { headers: authHeader() });
   }
 
+  getCrawl(data) {
+    return axios.post(API_URL + 'crawl', data, { headers: authHeader() });
+  }
 }
 
 export default new AdminService();
