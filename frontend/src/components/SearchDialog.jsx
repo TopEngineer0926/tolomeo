@@ -38,7 +38,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SearchDialog(props) {
 
-    const {history} = props;
     const [open, setOpen] = React.useState(false);
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
 
