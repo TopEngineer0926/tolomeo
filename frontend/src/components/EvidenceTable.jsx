@@ -4,7 +4,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { Container } from '@material-ui/core';
+import { Checkbox, Container } from '@material-ui/core';
 import SearchDialog from './SearchDialog'
 import Pagination from '@material-ui/lab/Pagination';
 import Grid from '@material-ui/core/Grid';
@@ -13,6 +13,7 @@ import FormControl from '@material-ui/core/FormControl';
 import NativeSelect from '@material-ui/core/NativeSelect';
 import InputBase from '@material-ui/core/InputBase';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
 
 const BootstrapInput = withStyles((theme) => ({
     root: {
@@ -113,7 +114,23 @@ const EvidenceTable = (props) => {
             <Grid item container>
                 <Container maxWidth="xl">
                     <h1>Risultati dello scraping</h1>
-                    <SearchDialog></SearchDialog>
+                    <Grid item container spacing={3} direction="row" alignItems="center">
+                        <Grid item>
+                            <SearchDialog></SearchDialog>
+                        </Grid>
+                        <Grid item>
+                            <TextField
+                                autoFocus
+                                id="cycles"
+                                label="Numero di cicli"
+                                type="text"
+                            />
+                        </Grid>
+                        <Grid item>
+                            <Checkbox
+                            />
+                        </Grid>
+                    </Grid>
                     <Table aria-label="simple table">
                         <TableHead>
                             <TableRow>
