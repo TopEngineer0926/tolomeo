@@ -14,6 +14,7 @@ import NativeSelect from '@material-ui/core/NativeSelect';
 import InputBase from '@material-ui/core/InputBase';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 const BootstrapInput = withStyles((theme) => ({
     root: {
@@ -71,6 +72,8 @@ const EvidenceTable = (props) => {
     const classes = useStyles();
     const dataList = [20, 50, 100, 200];
 
+    const [isOnlyKeywords, setIsOnlyKeywords] = useState(false);
+    const [query, setQuery] = useState('');
     const [evidences, setEvidences] = useState([]);
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(0);
@@ -82,9 +85,20 @@ const EvidenceTable = (props) => {
     const handleChange = (event) => {
         setLimit(event.target.value);
     };
+    const handleChangeIsOnlyKeywords = (event) => {
+        setIsOnlyKeywords(event.target.checked)
+    }
+    const handleChangeQuery = (event) => {
+        setQuery(event.target.value);
+    }
 
     useEffect(() => {
-        AdminService.getEvidences(dataList[limit], page)
+        var data = {};
+        data['limit'] = dataList[limit];
+        data['page'] = page;
+        data['only_keywords_found'] = isOnlyKeywords;
+        data['query'] = query;
+        AdminService.getEvidences(data)
             .then(
                 response => {
                     if (response.data.status_code !== 200) {
@@ -101,7 +115,7 @@ const EvidenceTable = (props) => {
                         window.location.replace('/login');
                 }
             );
-    }, [page, limit]);
+    }, [page, limit, query, isOnlyKeywords]);
 
     return (
         <Grid container spacing={2}>
@@ -129,13 +143,16 @@ const EvidenceTable = (props) => {
                         <Grid item>
                             <TextField
                                 autoFocus
-                                id="cycles"
-                                label="Numero di cicli"
+                                label="Cerca parole chiave"
                                 type="text"
+                                value={query}
+                                onChange={handleChangeQuery}
                             />
                         </Grid>
                         <Grid item>
-                            <Checkbox
+                            <FormControlLabel
+                                control={<Checkbox checked={isOnlyKeywords} onChange={handleChangeIsOnlyKeywords} name="gilad" />}
+                                label="Solo risultati con parole chiave"
                             />
                         </Grid>
                     </Grid>
