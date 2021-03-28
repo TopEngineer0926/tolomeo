@@ -23,18 +23,6 @@ const BootstrapInput = withStyles((theme) => ({
         },
     },
     input: {
-        [theme.breakpoints.up('xl')]: {
-            fontSize: 17,
-            height: 33,
-        },
-        [theme.breakpoints.down('lg')]: {
-            fontSize: 12,
-            height: 23,
-        },
-        [theme.breakpoints.down('md')]: {
-            fontSize: 8,
-            height: 16,
-        },
         borderRadius: 4,
         position: 'relative',
         backgroundColor: 'white',
