@@ -36,8 +36,9 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function SearchDialog() {
+export default function SearchDialog(props) {
 
+    const {history} = props;
     const [open, setOpen] = React.useState(false);
     const [openSnackbar, setOpenSnackbar] = React.useState(false);
 
@@ -49,6 +50,9 @@ export default function SearchDialog() {
     const classes = useStyles();
 
     const handleClickOpen = () => {
+        setStartUrls('');
+        setKeywords('');
+        setCycles(0);
         setOpen(true);
     };
 
@@ -72,16 +76,19 @@ export default function SearchDialog() {
         AdminService.getCrawl(data)
         .then(
             response => {
-                if (response.data.status !== "success") {
+                if (response.data.status_code !== 200) {
                     console.error(response.data.message);
                 } else {
-                    localStorage.setItem("token", JSON.stringify(response.data.token));
-                    setUUID(response.data.uuid);
+                    setUUID(response.data.data.worker_id);
                     setOpenSnackbar(true);
                 }
-            },
+            }
+        )
+        .catch(
             error => {
-                console.error("Can't connect to the Server!");
+                console.error(error.response.data.message);
+                if (error.response.data.status_code === 401)
+                    window.location.replace('/login');
             }
         );
     }

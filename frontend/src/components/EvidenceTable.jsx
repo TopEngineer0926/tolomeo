@@ -87,10 +87,18 @@ const EvidenceTable = (props) => {
         AdminService.getEvidences(dataList[limit], page)
             .then(
                 response => {
-                    setEvidences(response.data);
-                },
+                    if (response.data.status_code !== 200) {
+                        console.error(response.data.message);
+                      } else {
+                        setEvidences(response.data.data);
+                      }
+                }
+            )
+            .catch(
                 error => {
-                    console.error("Can't connect to the Server!");
+                    console.log(error.response.data.message);
+                    if (error.response.data.status_code === 401)
+                        window.location.replace('/login');
                 }
             );
     }, [page, limit]);

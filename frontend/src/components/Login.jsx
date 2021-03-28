@@ -78,10 +78,10 @@ export default function Login() {
     AdminService.login(data)
       .then(
         response => {
-          if (response.data.status !== "success") {
+          if (response.data.status_code !== 200) {
             console.error(response.data.message);
           } else {
-            localStorage.setItem("token", JSON.stringify(response.data.token));
+            localStorage.setItem("token", JSON.stringify(response.data.data.token));
             history.push("/evidences");
           }
         },
