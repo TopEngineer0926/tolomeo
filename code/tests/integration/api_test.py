@@ -14,7 +14,7 @@ from unittest import result
 def test_health():
     json_response = requests.get("http://0.0.0.0:5000/api/v1/health")
     assert 200 == json_response.status_code
-    assert "OK" == json.loads(json_response.content)
+    assert "OK" == json.loads(json_response.content)['message']
 
 
 def test_login_gives_token():
@@ -22,7 +22,7 @@ def test_login_gives_token():
         "http://0.0.0.0:5000/api/v1/login",
         json={"email": "test@email.com", "password": "testpassword"},
     )
-    assert "success" == json.loads(json_response.content)["status"]
+    assert "success" == json.loads(json_response.content)["message"]
 
 
 def test_login_gives_error_on_wrong_credentials():
@@ -51,11 +51,7 @@ def test_get_evidences_gives_not_authenticated_with_expired_token():
 
 
 def test_get_evidences_gives_response_with_token():
-    login_response = requests.post(
-        "http://0.0.0.0:5000/api/v1/login",
-        json={"email": "test@email.com", "password": "testpassword"},
-    )
-    token = json.loads(login_response.content)["token"]
+    token = attempt_login()
 
     json_response = requests.get(
         "http://0.0.0.0:5000/api/v1/evidences",
@@ -69,11 +65,7 @@ def test_get_export_gives_error_when_does_not_exists():
     if os.path.exists(os.environ.get("EXPORT_PATH")):
         os.remove(os.environ.get("EXPORT_PATH"))
 
-    login_response = requests.post(
-        "http://0.0.0.0:5000/api/v1/login",
-        json={"email": "test@email.com", "password": "testpassword"},
-    )
-    token = json.loads(login_response.content)["token"]
+    token = attempt_login()
 
     json_response = requests.get(
         "http://0.0.0.0:5000/api/v1/evidences/export",
@@ -89,11 +81,7 @@ def test_get_export_gives_export():
         Path(__file__).parent / "resources/export.csv", os.environ.get("EXPORT_PATH")
     )
 
-    login_response = requests.post(
-        "http://0.0.0.0:5000/api/v1/login",
-        json={"email": "test@email.com", "password": "testpassword"},
-    )
-    token = json.loads(login_response.content)["token"]
+    token = attempt_login()
 
     json_response = requests.get(
         "http://0.0.0.0:5000/api/v1/evidences/export",
@@ -108,11 +96,7 @@ def test_check_status_gives_not_found_error():
     if os.path.exists(os.environ.get("TASK_PATH")):
         os.remove(os.environ.get("TASK_PATH"))
 
-    login_response = requests.post(
-        "http://0.0.0.0:5000/api/v1/login",
-        json={"email": "test@email.com", "password": "testpassword"},
-    )
-    token = json.loads(login_response.content)["token"]
+    token = attempt_login()
 
     json_response = requests.get(
         "http://0.0.0.0:5000/api/v1/tasks/check-status",
@@ -124,28 +108,20 @@ def test_check_status_gives_not_found_error():
 def test_check_status_gives_response():
     add_task_file()
 
-    login_response = requests.post(
-        "http://0.0.0.0:5000/api/v1/login",
-        json={"email": "test@email.com", "password": "testpassword"},
-    )
-    token = json.loads(login_response.content)["token"]
+    token = attempt_login()
 
     json_response = requests.get(
         "http://0.0.0.0:5000/api/v1/tasks/check-status",
         headers={"Authorization": "Bearer " + token},
     )
     remove_task_file()
-    assert 200 == json_response.status_code
+    assert 202 == json_response.status_code
 
 
 def test_crawl_gives_error_response_conflict():
     add_task_file()
 
-    login_response = requests.post(
-        "http://0.0.0.0:5000/api/v1/login",
-        json={"email": "test@email.com", "password": "testpassword"},
-    )
-    token = json.loads(login_response.content)["token"]
+    token = attempt_login()
 
     json_response = requests.post(
         "http://0.0.0.0:5000/api/v1/crawl",
@@ -153,6 +129,14 @@ def test_crawl_gives_error_response_conflict():
     )
     remove_task_file()
     assert 409 == json_response.status_code
+
+
+def attempt_login():
+    login_response = requests.post(
+        "http://0.0.0.0:5000/api/v1/login",
+        json={"email": "test@email.com", "password": "testpassword"},
+    )
+    return json.loads(login_response.content)["data"]["token"]
 
 
 def add_task_file():
