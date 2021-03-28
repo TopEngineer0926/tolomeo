@@ -29,5 +29,5 @@ class Service(object):
         data["uuid"] = str(uuid.uuid4())
         return data
 
-    def get_version(self):
-        return {"data": self.repo_client.version()}
+    def delete_all_evidences(self):
+        return self.repo_client.delete_all_evidences()

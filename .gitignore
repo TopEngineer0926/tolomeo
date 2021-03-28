@@ -5,3 +5,6 @@ services/onionscan/onionscandb
 scan_result.log
 redis-data/
 redis-data-prod/
+celery-queue/
+celery-queue-prod/
+code/workers/

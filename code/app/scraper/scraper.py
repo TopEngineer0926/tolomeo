@@ -36,9 +36,9 @@ def scrape(url, keywords=[]):
         return {
             "url": url,
             "title": "None",
-            "urls_found": "None",
-            "urls_queryable": "None",
-            "keywords_found": "None",
+            "urls_found": [],
+            "urls_queryable": [],
+            "keywords_found": [],
         }
 
 

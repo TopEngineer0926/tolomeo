@@ -5,7 +5,7 @@ from functools import wraps
 from app.scraper.schema import UserSchema
 from app.scraper.service import Service
 from app.services.authentication.auth import Auth
-from flask import Flask, g, json, request
+from flask import Flask, g, json, request, send_file
 from flask_cors import CORS
 from app.worker import celery
 
@@ -37,7 +37,7 @@ def login():
             os.environ.get("APP_EMAIL") != data["email"]
             or os.environ.get("APP_PASSWORD") != data["password"]
         ):
-            return json_response("Unauthorized", 403)
+            return json_response("Unauthorized", 401)
 
         return json_response(
             {"status": "success", "token": Auth().generate_token_for_user_id(1)}
@@ -79,33 +79,53 @@ def create():
         return str(error)
 
 
-@app.route(PREFIX + "/check/<string:task_id>")
+@app.route(PREFIX + "/tasks/check-status", methods=["GET"])
 @auth_decorator
-def check_task(task_id: str):
-    res = celery.AsyncResult(task_id)
-    if res.state == states.PENDING:
-        return res.state
-    else:
-        return str(res.result)
+def check_task():
+    if os.path.exists(os.environ.get("TASK_PATH")):
+        with open(os.environ.get("TASK_PATH"), "r") as f:
+            task_id = f.read()
+            f.close()
+            res = celery.AsyncResult(task_id)
+            if res.state == states.PENDING:
+                return res.state
+            else:
+                return str(res.result)
+    return json_response("No tasks pending", 404)
 
 
 @app.route(PREFIX + "/crawl", methods=["POST"])
 @auth_decorator
 def crawl():
-    data = json.loads(request.data)
-    # get params from request (data) and send to task
-    task = celery.send_task(
-        "tasks.investigate",
-        args=[],
-        kwargs={
-            "urls_list": tuple(data["urls"]),
-            "step": data["step"],
-            "total_steps": data["totalsteps"],
-            "keywords": tuple(data["keywords"]),
-            "parent": data["parent"],
-        },
-    )
-    return json_response("{}".format(task.id), 200)
+    try:
+        if os.path.exists(os.environ.get("TASK_PATH")):
+            return json_response("Another task isn't yet completed", 409)
+
+        data = json.loads(request.data)
+
+        if None == data["parent"]:
+            if os.path.exists(os.environ.get("EXPORT_PATH")):
+                os.remove(os.environ.get("EXPORT_PATH"))
+            Service().delete_all_evidences()
+
+        task = celery.send_task(
+            "tasks.investigate",
+            args=[],
+            kwargs={
+                "urls_list": tuple(data["urls"]),
+                "step": data["step"],
+                "total_steps": data["totalsteps"],
+                "keywords": tuple(data["keywords"]),
+                "parent": data["parent"],
+            },
+        )
+
+        with open(os.environ.get("TASK_PATH"), "w") as f:
+            f.write(task.id)
+
+        return json_response("{}".format(task.id), 200)
+    except Exception as e:
+        return json_response(str(e), 500)
 
 
 @app.route(PREFIX + "/evidences", methods=["GET"])
@@ -114,6 +134,20 @@ def get_evidences():
     limit = request.args.get("limit", default=10)
     page = request.args.get("page", default=1)
     return json_response(Service().get_evidences(limit, page))
+
+
+@app.route(PREFIX + "/evidences/export", methods=["GET"])
+@auth_decorator
+def get_evidences_export():
+    file = os.environ.get("EXPORT_PATH")
+    if not os.path.isfile(file):
+        return json_response("File not found", 404)
+    return send_file(
+        file,
+        mimetype="text/csv",
+        attachment_filename="evidences.csv",
+        as_attachment=True,
+    )
 
 
 @app.route(PREFIX + "/map/<uuid>", methods=["GET"])
