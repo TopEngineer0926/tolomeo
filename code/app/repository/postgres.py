@@ -104,7 +104,7 @@ class PostgresRepository(object):
                 + " AND keywords_found IS NOT NULL AND keywords_found != 'None' AND keywords_found != '[]'"
             )
         if "" != query_filter:
-            where = where + " AND keywords_found LIKE '{}'".format(query_filter)
+            where = where + " AND keywords_found LIKE '%{}%'".format(query_filter)
 
         limit_query = "LIMIT " + str(limits["limit"])
         offset_query = "OFFSET " + str(limits["offset"])
