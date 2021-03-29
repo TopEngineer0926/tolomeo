@@ -57,6 +57,8 @@ def investigate(urls_list, parent, keywords, step, total_steps):
 
     except Exception as e:
         logging.error(str(e))
+        if os.path.exists(os.environ.get("TASK_PATH")):
+            os.remove(os.environ.get("TASK_PATH"))
         return "FAILED"
 
     return "COMPLETED"
