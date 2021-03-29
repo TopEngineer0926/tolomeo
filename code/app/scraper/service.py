@@ -8,8 +8,12 @@ class Service(object):
     def __init__(self, repo_client=Repository(adapter=PostgresRepository)):
         self.repo_client = repo_client
 
-    def get_evidences(self, limit=10, page=1):
-        return self.repo_client.get_evidences(limit, page)
+    def get_evidences(
+        self, limit=10, page=1, query_filter="", only_keywords_found=False
+    ):
+        return self.repo_client.get_evidences(
+            limit, page, query_filter, only_keywords_found
+        )
 
     def get_evidences_map(self, uuid, limit=10, page=1):
         return self.repo_client.get_evidences_map(uuid, limit, page)

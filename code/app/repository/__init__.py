@@ -26,8 +26,15 @@ class Repository(object):
     def delete_evidence(self, uuid):
         return self.client.delete_evidence(uuid)
 
-    def get_evidences(self, limit=10, page=1):
-        return self.client.get_evidences(limit=limit, page=page)
+    def get_evidences(
+        self, limit=10, page=1, query_filter="", only_keywords_found=False
+    ):
+        return self.client.get_evidences(
+            limit=limit,
+            page=page,
+            query_filter=query_filter,
+            only_keywords_found=only_keywords_found,
+        )
 
     def get_evidences_map(self, uuid, limit=10, page=1):
         return self.client.get_evidences_map(uuid, limit=limit, page=page)
