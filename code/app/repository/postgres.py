@@ -91,17 +91,30 @@ class PostgresRepository(object):
         cursor.close()
         return True
 
-    def get_evidences(self, limit=10, page=1):
+    def get_evidences(
+        self, limit=10, page=1, query_filter="", only_keywords_found=False
+    ):
         cursor = self.connection.cursor()
         limits = self.__use_limit_and_offset(limit=int(limit), page=int(page))
+
+        where = "WHERE true"
+        if True == only_keywords_found:
+            where = (
+                where
+                + " AND keywords_found IS NOT NULL AND keywords_found != 'None' AND keywords_found != '[]'"
+            )
+        if "" != query_filter:
+            where = where + " AND keywords_found LIKE '{}'".format(query_filter)
+
         limit_query = "LIMIT " + str(limits["limit"])
         offset_query = "OFFSET " + str(limits["offset"])
         query = """
         SELECT uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url, step, total_steps FROM evidences
+        {}
         ORDER BY step, created
         {} {}
         """.format(
-            limit_query, offset_query
+            where, limit_query, offset_query
         )
         cursor.execute(query)
         rows = cursor.fetchall()

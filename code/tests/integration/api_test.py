@@ -14,7 +14,7 @@ from unittest import result
 def test_health():
     json_response = requests.get("http://0.0.0.0:5000/api/v1/health")
     assert 200 == json_response.status_code
-    assert "OK" == json.loads(json_response.content)['message']
+    assert "OK" == json.loads(json_response.content)["message"]
 
 
 def test_login_gives_token():

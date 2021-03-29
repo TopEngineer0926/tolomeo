@@ -60,7 +60,7 @@ def user(email):
 @app.route(PREFIX + "/users/<email>", methods=["DELETE"])
 def delete(email):
     if Service().delete_user_for(email):
-        return json_response({}, 200,"Deleted seccessfully")
+        return json_response({}, 200, "Deleted seccessfully")
     else:
         return json_response({}, 404, "User not found")
 
@@ -71,7 +71,9 @@ def create():
         user_repo = UserSchema().load(json.loads(request.data))
 
         if user_repo.errors:
-            return json_response({"error": user_repo.errors}, 422, "Unprocessable entity")
+            return json_response(
+                {"error": user_repo.errors}, 422, "Unprocessable entity"
+            )
 
         new_user = Service().create_user(user_repo)
         return json_response(new_user, 200, "User created")
@@ -133,7 +135,15 @@ def crawl():
 def get_evidences():
     limit = request.args.get("limit", default=10)
     page = request.args.get("page", default=1)
-    return json_response(Service().get_evidences(limit, page), 200, "Evidences found")
+    query_filter = request.args.get("query", default="")
+    only_keywords_found = (
+        request.args.get("only_keywords_found", default="false") == "true"
+    )
+    return json_response(
+        Service().get_evidences(limit, page, query_filter, only_keywords_found),
+        200,
+        "Evidences found",
+    )
 
 
 @app.route(PREFIX + "/evidences/export", methods=["GET"])
@@ -155,7 +165,9 @@ def get_evidences_export():
 def get_evidences_map(uuid):
     limit = request.args.get("limit", default=10)
     page = request.args.get("page", default=1)
-    return json_response(Service().get_evidences_map(uuid, limit, page), 200, "Map found")
+    return json_response(
+        Service().get_evidences_map(uuid, limit, page), 200, "Map found"
+    )
 
 
 @app.route(PREFIX + "/map", methods=["GET"])
@@ -163,7 +175,9 @@ def get_evidences_map(uuid):
 def get_evidences_map_first():
     limit = request.args.get("limit", default=10)
     page = request.args.get("page", default=1)
-    return json_response(Service().get_evidences_map(None, limit, page), 200, "Map found")
+    return json_response(
+        Service().get_evidences_map(None, limit, page), 200, "Map found"
+    )
 
 
 @app.route(PREFIX + "/health")
@@ -178,11 +192,7 @@ def index():
 
 
 def json_response(payload, status=200, message="OK"):
-    body = {
-        "status_code": status,
-        "message":message, 
-        "data": payload
-    }
+    body = {"status_code": status, "message": message, "data": payload}
     return (json.dumps(body), status, {"content-type": "application/json"})
 
 
