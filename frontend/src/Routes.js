@@ -1,8 +1,9 @@
 import React from 'react';
-import { Switch, Route} from 'react-router-dom';
+import { Switch, Route, Redirect} from 'react-router-dom';
 import EvidenceTable from './components/EvidenceTable'
 import EvidenceChart from './components/EvidenceChart';
 import Login from './components/Login';
+import NotFound from './components/NotFound';
 
 const Routes = () => {
     return (
@@ -16,9 +17,13 @@ const Routes = () => {
             <Route path="/login">
                 <Login></Login>
             </Route>
-            <Route path="/">
+            <Route exact path="/">
                 Questo è l'ingresso dell'applicazione, effettua il login in alto a destra! {/*Define a home page */}
             </Route>
+            <Route path="/not-found">
+                <NotFound />
+            </Route>
+            <Redirect to="/not-found" />
         </Switch>
     );
 };

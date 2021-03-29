@@ -4,7 +4,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { Container } from '@material-ui/core';
+import { Checkbox, Container } from '@material-ui/core';
 import SearchDialog from './SearchDialog'
 import Pagination from '@material-ui/lab/Pagination';
 import Grid from '@material-ui/core/Grid';
@@ -13,6 +13,8 @@ import FormControl from '@material-ui/core/FormControl';
 import NativeSelect from '@material-ui/core/NativeSelect';
 import InputBase from '@material-ui/core/InputBase';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 const BootstrapInput = withStyles((theme) => ({
     root: {
@@ -29,18 +31,6 @@ const BootstrapInput = withStyles((theme) => ({
         },
     },
     input: {
-        [theme.breakpoints.up('xl')]: {
-            fontSize: 17,
-            height: 33,
-        },
-        [theme.breakpoints.down('lg')]: {
-            fontSize: 12,
-            height: 23,
-        },
-        [theme.breakpoints.down('md')]: {
-            fontSize: 8,
-            height: 16,
-        },
         borderRadius: 4,
         position: 'relative',
         backgroundColor: 'white',
@@ -82,6 +72,8 @@ const EvidenceTable = (props) => {
     const classes = useStyles();
     const dataList = [20, 50, 100, 200];
 
+    const [isOnlyKeywords, setIsOnlyKeywords] = useState(false);
+    const [query, setQuery] = useState('');
     const [evidences, setEvidences] = useState([]);
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(0);
@@ -93,18 +85,37 @@ const EvidenceTable = (props) => {
     const handleChange = (event) => {
         setLimit(event.target.value);
     };
+    const handleChangeIsOnlyKeywords = (event) => {
+        setIsOnlyKeywords(event.target.checked)
+    }
+    const handleChangeQuery = (event) => {
+        setQuery(event.target.value);
+    }
 
     useEffect(() => {
-        AdminService.getEvidences(dataList[limit], page)
+        var data = {};
+        data['limit'] = dataList[limit];
+        data['page'] = page;
+        data['only_keywords_found'] = isOnlyKeywords;
+        data['query'] = query;
+        AdminService.getEvidences(data)
             .then(
                 response => {
-                    setEvidences(response.data);
-                },
+                    if (response.data.status_code !== 200) {
+                        console.error(response.data.message);
+                      } else {
+                        setEvidences(response.data.data);
+                      }
+                }
+            )
+            .catch(
                 error => {
-                    console.error("Can't connect to the Server!");
+                    console.log(error.response.data.message);
+                    if (error.response.data.status_code === 401)
+                        window.location.replace('/login');
                 }
             );
-    }, [page, limit]);
+    }, [page, limit, query, isOnlyKeywords]);
 
     return (
         <Grid container spacing={2}>
@@ -125,7 +136,26 @@ const EvidenceTable = (props) => {
             <Grid item container>
                 <Container maxWidth="xl">
                     <h1>Risultati dello scraping</h1>
-                    <SearchDialog></SearchDialog>
+                    <Grid item container spacing={3} direction="row" alignItems="center">
+                        <Grid item>
+                            <SearchDialog></SearchDialog>
+                        </Grid>
+                        <Grid item>
+                            <TextField
+                                autoFocus
+                                label="Cerca parole chiave"
+                                type="text"
+                                value={query}
+                                onChange={handleChangeQuery}
+                            />
+                        </Grid>
+                        <Grid item>
+                            <FormControlLabel
+                                control={<Checkbox checked={isOnlyKeywords} onChange={handleChangeIsOnlyKeywords} name="gilad" />}
+                                label="Solo risultati con parole chiave"
+                            />
+                        </Grid>
+                    </Grid>
                     <Table aria-label="simple table">
                         <TableHead>
                             <TableRow>

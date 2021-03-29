@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TreeChart from './TreeChart';
 import Pagination from '@material-ui/lab/Pagination';
 import Grid from '@material-ui/core/Grid';
@@ -23,18 +23,6 @@ const BootstrapInput = withStyles((theme) => ({
         },
     },
     input: {
-        [theme.breakpoints.up('xl')]: {
-            fontSize: 17,
-            height: 33,
-        },
-        [theme.breakpoints.down('lg')]: {
-            fontSize: 12,
-            height: 23,
-        },
-        [theme.breakpoints.down('md')]: {
-            fontSize: 8,
-            height: 16,
-        },
         borderRadius: 4,
         position: 'relative',
         backgroundColor: 'white',
@@ -93,13 +81,16 @@ const EvidenceChart = (props) => {
         AdminService.getCharts(dataList[limit], page)
             .then(
                 response => {
+                    if (response.data.status_code !== 200) {
+                        console.error(response.data.message);
+                    } else {
                         const data = {
                             name: "Partenza",
                             attributes: {
                                 step: 0,
                                 keywords_found: null,
                             },
-                            children: response.data.map(
+                            children: response.data.data.map(
                                 item => {
                                     return {
                                         name: item.url,
@@ -122,9 +113,14 @@ const EvidenceChart = (props) => {
                             )
                         }
                         setEvidences(data);
-                },
+                    }
+                }
+            )
+            .catch(
                 error => {
-                    console.error("Can't connect to the Server!");
+                    console.log(error.response.data.message);
+                    if (error.response.data.status_code === 401)
+                        window.location.replace('/login');
                 }
             );
     }, [page, limit]);
