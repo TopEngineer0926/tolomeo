@@ -8,8 +8,8 @@ class AdminService {
     return axios.post(API_URL + 'login', data, {});
   }
 
-  getEvidences(data) {
-    return axios.get(API_URL + 'evidences?limit=' + data.limit + '&page=' + data.page + '&only_keywords_found=' + data.only_keywords_found + '&query=' + data.query, { headers: authHeader() });
+  getEvidences(limit, page, only_keywords_found, query) {
+    return axios.get(API_URL + 'evidences?limit=' + limit + '&page=' + page + '&only_keywords_found=' + only_keywords_found + '&query=' + query, { headers: authHeader() });
   }
 
   getCharts(limit, page) {

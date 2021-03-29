@@ -93,12 +93,7 @@ const EvidenceTable = (props) => {
     }
 
     useEffect(() => {
-        var data = {};
-        data['limit'] = dataList[limit];
-        data['page'] = page;
-        data['only_keywords_found'] = isOnlyKeywords;
-        data['query'] = query;
-        AdminService.getEvidences(data)
+        AdminService.getEvidences(dataList[limit], page, isOnlyKeywords, query)
             .then(
                 response => {
                     if (response.data.status_code !== 200) {
