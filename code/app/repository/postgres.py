@@ -153,9 +153,11 @@ class PostgresRepository(object):
         query = """
         select
             e.uuid,
-            e.step as start_step,
+            e.step,
             e.url,
+            e.keywords,
             e.keywords_found,
+            e.urls_queryable,
             e.parent
         from
             evidences e
@@ -173,7 +175,10 @@ class PostgresRepository(object):
                     "uuid": row[0],
                     "step": str(row[1]),
                     "url": row[2],
-                    "keywords_found": row[3],
+                    "keywords": row[3],
+                    "keywords_found": row[4],
+                    "urls_queryable": json.loads(row[5]),
+                    "parent": row[6],
                     "children": children,
                 }
             )
@@ -274,9 +279,6 @@ class PostgresRepository(object):
 
     def __use_limit_and_offset(self, limit=10, page=1):
         if page <= 1:
-            return {
-                "limit": limit,
-                "offset": 0,
-            }
+            return {"limit": limit, "offset": 0}
 
         return {"limit": limit, "offset": 0 if 1 == page else ((page - 1) * limit + 1)}

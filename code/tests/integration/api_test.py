@@ -124,8 +124,7 @@ def test_crawl_gives_error_response_conflict():
     token = attempt_login()
 
     json_response = requests.post(
-        "http://0.0.0.0:5000/api/v1/crawl",
-        headers={"Authorization": "Bearer " + token},
+        "http://0.0.0.0:5000/api/v1/crawl", headers={"Authorization": "Bearer " + token}
     )
     remove_task_file()
     assert 409 == json_response.status_code
