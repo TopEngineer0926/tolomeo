@@ -44,7 +44,6 @@ export default function SearchDialog(props) {
     const [startUrls, setStartUrls] = useState('');
     const [keywords, setKeywords] = useState('');
     const [cycles, setCycles] = useState(0);
-    const [uuid, setUUID] = useState('');
 
     const classes = useStyles();
 
@@ -78,7 +77,6 @@ export default function SearchDialog(props) {
                 if (response.data.status_code !== 200) {
                     console.error(response.data.message);
                 } else {
-                    setUUID(response.data.data.worker_id);
                     setOpenSnackbar(true);
                 }
             }

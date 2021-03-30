@@ -89,6 +89,9 @@ const EvidenceChart = (props) => {
                             attributes: {
                                 step: 0,
                                 keywords_found: null,
+                                urls_queryable: [],
+                                keywords: '',
+                                parent: null
                             },
                             children: response.data.data.map(
                                 item => {
@@ -96,14 +99,20 @@ const EvidenceChart = (props) => {
                                         name: item.url,
                                         attributes: {
                                             keywords_found: item.keywords_found,
-                                            step: item.step
+                                            keywords: item.keywords,
+                                            step: item.step,
+                                            urls_queryable: item.urls_queryable,
+                                            parent: item.parent
                                         },
                                         children: item.children.map(child => {
                                             return {
                                                 name: child.url,
                                                 attributes: {
                                                     step: child.step,
-                                                    keywords_found: child.keywords_found
+                                                    keywords_found: child.keywords_found,
+                                                    keywords: child.keywords,
+                                                    urls_queryable: child.urls_queryable,
+                                                    parent: child.parent
                                                 }
                 
                                             }
