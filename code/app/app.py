@@ -115,7 +115,7 @@ def crawl():
             args=[],
             kwargs={
                 "urls_list": tuple(data["urls"]),
-                "step": int(data["step"]),
+                "step": 1,
                 "total_steps": int(data["totalsteps"]),
                 "keywords": tuple(data["keywords"]),
                 "parent": data["parent"],
