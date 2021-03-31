@@ -91,7 +91,8 @@ const EvidenceChart = (props) => {
                                 keywords_found: null,
                                 urls_queryable: [],
                                 keywords: '',
-                                parent: null
+                                parent: null,
+                                uuid: null
                             },
                             children: response.data.data.map(
                                 item => {
@@ -102,7 +103,8 @@ const EvidenceChart = (props) => {
                                             keywords: item.keywords,
                                             step: item.step,
                                             urls_queryable: item.urls_queryable,
-                                            parent: item.parent
+                                            parent: item.parent,
+                                            uuid: item.uuid
                                         },
                                         children: item.children.map(child => {
                                             return {
@@ -112,7 +114,8 @@ const EvidenceChart = (props) => {
                                                     keywords_found: child.keywords_found,
                                                     keywords: child.keywords,
                                                     urls_queryable: child.urls_queryable,
-                                                    parent: child.parent
+                                                    parent: child.parent,
+                                                    uuid: child.uuid
                                                 }
                 
                                             }
@@ -148,16 +151,19 @@ const EvidenceChart = (props) => {
                         input={<BootstrapInput />}
                     >
                         {
-                            dataList.map((select, i) =>
-                                <option value={i} key={select}>{select}</option>
-                            )}
+                            dataList.map(
+                                (select, i) => <option value={i} key={select}>{select}</option>
+                            )
+                        }
                     </NativeSelect>
                 </FormControl>
             </Grid>
             <Grid item container>
                 <TreeChart
-                    data={evidences}>
-                </TreeChart>
+                    data={evidences}
+                    limit={dataList[limit]}
+                    page={page}
+                />
             </Grid>
             <Grid item container direction="row-reverse" className={classes.selectMargin}>
                 <Pagination
