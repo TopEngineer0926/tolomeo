@@ -35,3 +35,6 @@ class Service(object):
 
     def delete_all_evidences(self):
         return self.repo_client.delete_all_evidences()
+
+    def save_telegram_evidence(self, evidence):
+        return self.repo_client.save_evidence(evidence)

@@ -1,10 +1,12 @@
 import os
 import celery.states as states
+import uuid
 
 from functools import wraps
 from app.scraper.schema import UserSchema
 from app.scraper.service import Service
 from app.services.authentication.auth import Auth
+from app.services.authentication.hmac import HmacAuth
 from flask import Flask, g, json, request, send_file
 from flask_cors import CORS
 from app.worker import celery
@@ -29,13 +31,30 @@ def auth_decorator(function):
     return auth_wrapper
 
 
+def external_service_decorator(function):
+    @wraps(function)
+    def external_service_wrapper(*args, **kwargs):
+        try:
+            if False == HmacAuth().is_valid_hexdigest(
+                request.args.get("k"), request.data.decode()
+            ):
+                return json_response({}, 403, "Forbidden")
+        except Exception:
+            return json_response({}, 500, "Internal Server Error")
+        return function(*args, **kwargs)
+
+    return external_service_wrapper
+
+
 @app.route(PREFIX + "/login", methods=["POST"])
 def login():
     try:
         data = json.loads(request.data)
-        if (
-            os.environ.get("APP_EMAIL") != data["email"]
-            or os.environ.get("APP_PASSWORD") != data["password"]
+
+        if not HmacAuth().is_valid_hexdigest(
+            os.environ.get("APP_EMAIL"), data["email"]
+        ) or not HmacAuth().is_valid_hexdigest(
+            os.environ.get("APP_PASSWORD"), data["password"]
         ):
             return json_response({}, 401, "Unauthorized")
 
@@ -79,6 +98,27 @@ def create():
         return json_response(new_user, 200, "User created")
     except Exception as error:
         return json_response({"error": str(error)}, 500, "Internal Server Error")
+
+
+@app.route(PREFIX + "/evidences/telegram", methods=["POST"])
+@external_service_decorator
+def add_telegram_evidence():
+    data = json.loads(request.data)
+    evidence_uuid = str(uuid.uuid4())
+    evidence = {
+        "uuid": evidence_uuid,
+        "parent": None,
+        "keywords": ",".join(data["keywords"]),
+        "source": "telegram",
+        "step": 1,
+        "total_steps": 1,
+        "url": data["url"],
+        "title": data["title"],
+        "urls_found": data["urls_found"],
+        "urls_queryable": data["urls_queryable"],
+        "keywords_found": data["keywords_found"],
+    }
+    return json_response(Service().save_telegram_evidence(evidence), 202, "Accepted")
 
 
 @app.route(PREFIX + "/tasks/check-status", methods=["GET"])
@@ -125,7 +165,7 @@ def crawl():
         with open(os.environ.get("TASK_PATH"), "w") as f:
             f.write(task.id)
 
-        return json_response({"worker_id": task.id}, 200, "Task started")
+        return json_response({}, 200, "Task started")
     except Exception as e:
         return json_response({"error": str(e)}, 500, "Internal Server Error")
 
