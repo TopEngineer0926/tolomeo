@@ -43,6 +43,10 @@ const useStyles = makeStyles((theme) => ({
     margin: {
         margin: theme.spacing(1),
         width: "25ch"
+    },
+    textOneLine: {
+        whiteSpace: 'nowrap',
+        overflow: 'hidden'
     }
 }));
 
@@ -55,7 +59,8 @@ const renderForeignObjectNode = ({
     nodeDatum,
     toggleNode,
     foreignObjectProps,
-    handleClickOpen
+    handleClickOpen,
+    classes
 }) => {
  return   (
         <g>
@@ -64,17 +69,9 @@ const renderForeignObjectNode = ({
                 <Card style={{ maxWidth: 345 }}>
                     <CardActionArea>
                         <CardContent>
-                            <Typography gutterBottom variant="h5" component="h2">
-                                {nodeDatum.name}
-                            </Typography>
-                            {nodeDatum.attributes.step && <Typography variant="body2" color="textSecondary" component="p">
-                                Ciclo: {nodeDatum.attributes.step}
-                            </Typography>
-                            }
-                            {nodeDatum.attributes.keywords_found && <Typography variant="body2" color="textSecondary" component="p">
-                                Parole chiave trovate: {nodeDatum.attributes.keywords_found}
-                            </Typography>
-                            }
+                            <h2 className={classes.textOneLine}>{nodeDatum.name}</h2>
+                            {nodeDatum.attributes.step && <p className={classes.textOneLine}>Ciclo: {nodeDatum.attributes.step}</p>}
+                            {nodeDatum.attributes.keywords_found && <p className={classes.textOneLine}>Parole chiave trovate: {nodeDatum.attributes.keywords_found}</p>}
                         </CardContent>
                     </CardActionArea>
                     <CardActions>
@@ -172,7 +169,7 @@ export default function TreeChart(props) {
                         translate={translate}
                         nodeSize={nodeSize}
                         renderCustomNodeElement={(rd3tProps) =>
-                            renderForeignObjectNode({ ...rd3tProps, foreignObjectProps, handleClickOpen })
+                            renderForeignObjectNode({ ...rd3tProps, foreignObjectProps, handleClickOpen, classes })
                         }
                         orientation="vertical"
                     />
