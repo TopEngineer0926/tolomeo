@@ -16,6 +16,10 @@ class AdminService {
     return axios.get(API_URL + 'map?limit=' + limit + '&page=' + page, { headers: authHeader() });
   }
 
+  getExpandedCharts(limit, page, uuid) {
+    return axios.get(API_URL + 'map/' + uuid + '?limit=' + limit + '&page=' + page, { headers: authHeader() });
+  }
+
   getCrawl(data) {
     return axios.post(API_URL + 'crawl', data, { headers: authHeader() });
   }
