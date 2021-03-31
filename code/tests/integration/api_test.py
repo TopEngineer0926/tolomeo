@@ -6,9 +6,12 @@ import app.app as App
 import requests
 import os
 import shutil
+from app.services.authentication.hmac import HmacAuth
 
 from pathlib import Path
 from unittest import result
+from app.repository import Repository
+from app.repository.postgres import PostgresRepository
 
 
 def test_health():
@@ -128,6 +131,29 @@ def test_crawl_gives_error_response_conflict():
     )
     remove_task_file()
     assert 409 == json_response.status_code
+
+
+def test_save_telegram_evidence():
+    json_body = {
+        "parent": None,
+        "keywords": ["enjoy", "meal"],
+        "url": "urlfaketelgramchannel",
+        "title": "telegramtitle",
+        "urls_found": ["ahahahah.onion", "bbbbbbbbb.onion", "gooooo.com"],
+        "urls_queryable": ["ahahahah.onion", "bbbbbbbbb.onion"],
+        "keywords_found": [{"meal": ["do you like your meal?", "vote the meal"]}],
+    }
+    hmac_hexdigest = HmacAuth().hexdigest_message(json.dumps(json_body))
+    json_response = requests.post(
+        "http://0.0.0.0:5000/api/v1/evidences/telegram",
+        params={"k": hmac_hexdigest},
+        json=json_body,
+    )
+    repo_client = Repository(adapter=PostgresRepository)
+
+    assert 202 == json_response.status_code
+    uuid = json.loads(json_response.content)["data"]["uuid"]
+    assert True == repo_client.delete_evidence(uuid)
 
 
 def attempt_login():
