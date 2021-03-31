@@ -127,9 +127,13 @@ const EvidenceChart = (props) => {
             )
             .catch(
                 error => {
-                    console.log(error.response.data.message);
-                    if (error.response.data.status_code === 401)
+                    if (error.response) {
+                        console.log(error.response.data.message);
+                        if (error.response.data.status_code === 401)
+                            window.location.replace('/login');
+                    } else {
                         window.location.replace('/login');
+                    }
                 }
             );
     }, [page, limit]);
