@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Tree from 'react-d3-tree';
 import { Container } from '@material-ui/core';
 import { useCenteredTree } from "./helpers";
@@ -8,7 +8,6 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -59,7 +58,8 @@ const renderForeignObjectNode = ({
     nodeDatum,
     toggleNode,
     foreignObjectProps,
-    handleClickOpen,
+    handleClickPickUp,
+    handleClickExpand,
     classes
 }) => {
  return   (
@@ -77,10 +77,10 @@ const renderForeignObjectNode = ({
                     <CardActions>
                         <Grid item container justify="space-between">
                             <Grid item>
-                                <Button size="small" color="primary">Espandi</Button>
+                                <Button size="small" color="primary" onClick={(e) => handleClickExpand(e, nodeDatum)}>Espandi</Button>
                             </Grid>
                             <Grid item>
-                                <Button size="small" color="primary" onClick={(e) => handleClickOpen(e, nodeDatum)}>Riprendi da qui</Button>
+                                <Button size="small" color="primary" onClick={(e) => handleClickPickUp(e, nodeDatum)}>Riprendi da qui</Button>
                             </Grid>
                         </Grid>
                     </CardActions>
@@ -94,9 +94,13 @@ export default function TreeChart(props) {
     const [translate, containerRef] = useCenteredTree();
     const nodeSize = { x: 400, y: 200 };
     const foreignObjectProps = { width: nodeSize.x, height: nodeSize.y, x: -100, className: "node-custom" };
-    const data = props.data;
-    const [open, setOpen] = React.useState(false);
-    const [openSnackbar, setOpenSnackbar] = React.useState(false);
+
+    let items = props.data;
+    const [data, setData] = useState(items);
+    const limit = props.limit;
+    const page = props.page;
+    const [open, setOpen] = useState(false);
+    const [openSnackbar, setOpenSnackbar] = useState(false);
 
     const [startUrls, setStartUrls] = useState('');
     const [keywords, setKeywords] = useState('');
@@ -105,7 +109,11 @@ export default function TreeChart(props) {
     const [step, setStep] = useState(0);
     const classes = useStyles();
 
-    const handleClickOpen = (event, nodeData) => {
+    useEffect(() => {
+        setData(items)
+    }, [items]);
+
+    const handleClickPickUp = (event, nodeData) => {
         setStartUrls(nodeData.attributes.urls_queryable + "");
         setKeywords(nodeData.attributes.keywords + "");
         setCycles(0);
@@ -113,6 +121,77 @@ export default function TreeChart(props) {
         setParent(nodeData.attributes.parent);
         setOpen(true);
     };
+
+    const handleClickExpand = (event, nodeData) => {
+        if (nodeData.attributes.uuid == null)
+            return;
+        AdminService.getExpandedCharts(limit, page, nodeData.attributes.uuid)
+        .then(
+            response => {
+                if (response.data.status_code !== 200) {
+                    console.error(response.data.message);
+                } else {
+                    let response_data = {
+                        name: "Partenza",
+                        attributes: {
+                            step: 0,
+                            keywords_found: null,
+                            urls_queryable: [],
+                            keywords: '',
+                            parent: null,
+                            uuid: null
+                        },
+                        children: data.children && data.children.map(
+                            (d, i) =>(d.attributes.uuid === nodeData.attributes.uuid) ? {
+                                name: nodeData.name,
+                                attributes: nodeData.attributes,
+                                children: response.data.data.map(
+                                    item => {
+                                        return {
+                                            name: item.url,
+                                            attributes: {
+                                                keywords_found: item.keywords_found,
+                                                keywords: item.keywords,
+                                                step: item.step,
+                                                urls_queryable: item.urls_queryable,
+                                                parent: item.parent,
+                                                uuid: item.uuid
+                                            },
+                                            children: item.children.map(child => {
+                                                return {
+                                                    name: child.url,
+                                                    attributes: {
+                                                        step: child.step,
+                                                        keywords_found: child.keywords_found,
+                                                        keywords: child.keywords,
+                                                        urls_queryable: child.urls_queryable,
+                                                        parent: child.parent,
+                                                        uuid: child.uuid
+                                                    }
+                                                }
+                                            })
+                                        }
+                                    }
+                                )
+                            } : d
+                        )
+                    }
+                    setData(response_data);
+                }
+            }
+        )
+        .catch(
+            error => {
+                if (error.response) {
+                    console.log(error.response.data.message);
+                    if (error.response.data.status_code === 401)
+                        window.location.replace('/login');
+                } else {
+                    window.location.replace('/login');
+                }
+            }
+        );
+    }
 
     const handleClose = () => {
         setOpen(false);
@@ -169,7 +248,7 @@ export default function TreeChart(props) {
                         translate={translate}
                         nodeSize={nodeSize}
                         renderCustomNodeElement={(rd3tProps) =>
-                            renderForeignObjectNode({ ...rd3tProps, foreignObjectProps, handleClickOpen, classes })
+                            renderForeignObjectNode({ ...rd3tProps, foreignObjectProps, handleClickPickUp, handleClickExpand, classes })
                         }
                         orientation="vertical"
                     />
