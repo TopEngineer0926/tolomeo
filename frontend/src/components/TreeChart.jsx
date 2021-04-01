@@ -80,7 +80,11 @@ const renderForeignObjectNode = ({
                                 <Button size="small" color="primary" onClick={(e) => handleClickExpand(e, nodeDatum)}>Espandi</Button>
                             </Grid>
                             <Grid item>
-                                <Button size="small" color="primary" onClick={(e) => handleClickPickUp(e, nodeDatum)}>Riprendi da qui</Button>
+                                <Button size="small" color="primary" onClick={(e) => handleClickPickUp(e, nodeDatum)}
+                                    style={{visibility: nodeDatum.attributes.urls_queryable.length > 0 ? 'visible' : 'hidden'}}
+                                >
+                                    Riprendi da qui
+                                </Button>
                             </Grid>
                         </Grid>
                     </CardActions>
