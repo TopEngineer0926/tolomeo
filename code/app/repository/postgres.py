@@ -204,7 +204,7 @@ class PostgresRepository(object):
                     "step": str(row[1]),
                     "url": row[2],
                     "keywords": row[3],
-                    "keywords_found": row[4],
+                    "keywords_found": json.loads(row[4]),
                     "urls_queryable": json.loads(row[5]),
                     "parent": row[6],
                     "children": children,
