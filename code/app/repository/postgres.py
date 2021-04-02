@@ -140,6 +140,32 @@ class PostgresRepository(object):
         cursor.close()
         return response
 
+    def get_evidences_count(self, query_filter="", only_keywords_found=False):
+        cursor = self.connection.cursor()
+
+        where = "WHERE true"
+        if True == only_keywords_found:
+            where = (
+                where
+                + " AND keywords_found IS NOT NULL AND keywords_found != 'None' AND keywords_found != '[]'"
+            )
+        if "" != query_filter:
+            where = where + " AND keywords_found LIKE '%{}%'".format(
+                query_filter.replace("'", "")
+            )
+
+        query = """
+        SELECT count(uuid) 
+        FROM evidences
+        {}
+        """.format(
+            where
+        )
+        cursor.execute(query)
+        count = cursor.fetchone()
+        cursor.close()
+        return int(count[0])
+
     def get_evidences_map(self, uuid=None, limit=10, page=1):
         where = ""
         if uuid:
@@ -187,6 +213,28 @@ class PostgresRepository(object):
 
         cursor.close()
         return response
+
+    def get_evidences_map_count(self, uuid=None):
+        where = ""
+        if uuid:
+            where = "where e.uuid = '{}'".format(uuid.replace("'", ""))
+        else:
+            where = "where e.step = 1"
+
+        cursor = self.connection.cursor()
+        query = """
+        select
+            count(e.uuid)
+        from
+            evidences e
+        {}
+        """.format(
+            where
+        )
+        cursor.execute(query)
+        count = cursor.fetchone()
+        cursor.close()
+        return int(count[0])
 
     def get_all_evidences_for_export(self):
         cursor = self.connection.cursor()

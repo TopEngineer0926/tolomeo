@@ -42,5 +42,14 @@ class Repository(object):
     def get_all_evidences_for_export(self):
         return self.client.get_all_evidences_for_export()
 
+    def get_evidences_map_count(self, uuid, limit=10, page=1):
+        return self.client.get_evidences_map_count(uuid)
+
+    def get_evidences_count(self, query_filter="", only_keywords_found=False):
+        return self.client.get_evidences_count(
+            query_filter=query_filter,
+            only_keywords_found=only_keywords_found,
+        )
+
     def delete_all_evidences(self):
         return self.client.delete_all_evidences()
