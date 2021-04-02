@@ -77,7 +77,7 @@ const EvidenceTable = (props) => {
     const [evidences, setEvidences] = useState([]);
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(0);
-    const totalpage = 10;
+    const [totalpage, setTotalPage] = useState(1);
 
     const handleChangePage = (event, page) => {
         setPage(page);
@@ -99,7 +99,9 @@ const EvidenceTable = (props) => {
                     if (response.data.status_code !== 200) {
                         console.error(response.data.message);
                       } else {
-                        setEvidences(response.data.data);
+                        setEvidences(response.data.data.items);
+                        setTotalPage(response.data.data.total_pages);
+                        setPage(response.data.data.page);
                       }
                 }
             )

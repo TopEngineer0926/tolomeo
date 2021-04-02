@@ -45,7 +45,8 @@ const useStyles = makeStyles((theme) => ({
     },
     textOneLine: {
         whiteSpace: 'nowrap',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
     }
 }));
 
@@ -72,6 +73,7 @@ const renderForeignObjectNode = ({
                             <h2 className={classes.textOneLine}>{nodeDatum.name}</h2>
                             {nodeDatum.attributes.step && <p className={classes.textOneLine}>Ciclo: {nodeDatum.attributes.step}</p>}
                             {nodeDatum.attributes.keywords_found && <p className={classes.textOneLine}>Parole chiave trovate: {nodeDatum.attributes.keywords_found}</p>}
+                            {nodeDatum.attributes.urls_queryable && <p className={classes.textOneLine}>Url trovate utilizzabili: {nodeDatum.attributes.urls_queryable}</p>}
                         </CardContent>
                     </CardActionArea>
                     <CardActions>
@@ -81,7 +83,7 @@ const renderForeignObjectNode = ({
                             </Grid>
                             <Grid item>
                                 <Button size="small" color="primary" onClick={(e) => handleClickPickUp(e, nodeDatum)}
-                                    style={{visibility: nodeDatum.attributes.urls_queryable.length > 0 ? 'visible' : 'hidden'}}
+                                    style={{visibility: nodeDatum.attributes.urls_queryable && nodeDatum.attributes.urls_queryable.length > 0 ? 'visible' : 'hidden'}}
                                 >
                                     Riprendi da qui
                                 </Button>
@@ -149,7 +151,7 @@ export default function TreeChart(props) {
                             (d, i) =>(d.attributes.uuid === nodeData.attributes.uuid) ? {
                                 name: nodeData.name,
                                 attributes: nodeData.attributes,
-                                children: response.data.data.map(
+                                children: response.data.data.items.map(
                                     item => {
                                         return {
                                             name: item.url,
