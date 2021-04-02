@@ -68,7 +68,7 @@ const EvidenceChart = (props) => {
 
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(0);
-    const totalpage = 10;
+    const [totalpage, setTotalPage] = useState(1);
 
     const handleChangePage = (event, page) => {
         setPage(page);
@@ -84,6 +84,8 @@ const EvidenceChart = (props) => {
                     if (response.data.status_code !== 200) {
                         console.error(response.data.message);
                     } else {
+                        setPage(response.data.data.page);
+                        setTotalPage(response.data.data.total_pages);
                         const data = {
                             name: "Partenza",
                             attributes: {
@@ -94,7 +96,7 @@ const EvidenceChart = (props) => {
                                 parent: null,
                                 uuid: null
                             },
-                            children: response.data.data.map(
+                            children: response.data.data.items.map(
                                 item => {
                                     return {
                                         name: item.url,
