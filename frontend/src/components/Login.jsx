@@ -1,4 +1,4 @@
-import {React, useState} from 'react';
+import { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -53,40 +53,80 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  error: {
+    color: 'red'
+  }
 }));
-
+const validEmailRegex = RegExp(/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i);
+const validateForm = (errors) => {
+  let valid = true;
+  Object.values(errors).forEach(
+    (val) => val.length > 0 && (valid = false)
+  );
+  return valid;
+}
 export default function Login() {
   const classes = useStyles();
   const history = useHistory();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorsEmail, setErrorsEmail] = useState('');
+  const [errorsPassword, setErrorsPassword] = useState('');
+
+  document.onkeydown = function (e) {
+    if (e.keyCode === 13) {
+      if (document.getElementById('login')) {
+        handleLogin();
+      }
+    }
+  }
 
   const handleChangeEmail = (event) => {
-      setEmail(event.target.value);
+    event.preventDefault();
+    let errorsMail =
+      validEmailRegex.test(event.target.value)
+        ? ''
+        : "L'email non è valida!";
+    setEmail(event.target.value);
+    setErrorsEmail(errorsMail);
   }
   const handleChangePassword = (event) => {
-      setPassword(event.target.value);
+    event.preventDefault();
+    let errorsPass =
+      event.target.value.length === 0
+        ? ''
+        : '';
+    setPassword(event.target.value);
+    setErrorsPassword(errorsPass);
   }
 
   const handleLogin = () => {
-    /* Perform login and then navigate to evidences or home */
-    var data = {};
-    data['email'] = email;
-    data['password'] = password;
-    AdminService.login(data)
-      .then(
-        response => {
-          if (response.data.status_code !== 200) {
-            console.error(response.data.message);
-          } else {
-            localStorage.setItem("token", JSON.stringify(response.data.data.token));
-            history.push("/evidences");
-          }
-        },
-        error => {
-          console.error("Can't connect to the Server!");
-        }
-      );
+    let cnt = 0;
+    if (email.length === 0) { setErrorsEmail('Per favore inserisci la tua email!'); cnt++; }
+    if (password.length === 0) { setErrorsPassword('Per favore inserisci LA TUA password!'); cnt++; }
+    if (cnt === 0) {
+      if (validateForm(errorsEmail)) {
+        /* Perform login and then navigate to evidences or home */
+        var data = {};
+        data['email'] = email;
+        data['password'] = password;
+        AdminService.login(data)
+          .then(
+            response => {
+              if (response.data.status_code !== 200) {
+                console.error(response.data.message);
+              } else {
+                localStorage.setItem("token", JSON.stringify(response.data.data.token));
+                history.push("/evidences");
+              }
+            },
+            error => {
+              console.error("Can't connect to the Server!");
+            }
+          );
+      }
+      else setErrorsEmail('Email is not valid!');
+    }
   };
 
   return (
@@ -115,6 +155,8 @@ export default function Login() {
               value={email}
               onChange={handleChangeEmail}
             />
+            {errorsEmail.length > 0 &&
+              <span className={classes.error}>{errorsEmail}</span>}
             <TextField
               variant="outlined"
               margin="normal"
@@ -128,6 +170,8 @@ export default function Login() {
               value={password}
               onChange={handleChangePassword}
             />
+            {errorsPassword.length > 0 &&
+              <span className={classes.error}>{errorsPassword}</span>}
             {/* <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Ricordati di me"
@@ -136,6 +180,7 @@ export default function Login() {
               fullWidth
               variant="contained"
               color="primary"
+              id="login"
               className={classes.submit}
               onClick={handleLogin}
             >
