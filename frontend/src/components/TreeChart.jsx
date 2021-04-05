@@ -71,7 +71,7 @@ const renderForeignObjectNode = ({
                     <CardActionArea>
                         <CardContent>
                             <h2 className={classes.textOneLine}>{nodeDatum.name}</h2>
-                            {nodeDatum.attributes.step && <p className={classes.textOneLine}>Ciclo: {nodeDatum.attributes.step}</p>}
+                            {<p className={classes.textOneLine}>Ciclo: {nodeDatum.attributes.step}</p>}
                             {nodeDatum.attributes.keywords_found && <p className={classes.textOneLine}>Parole chiave trovate: {nodeDatum.attributes.keywords_found}</p>}
                             {nodeDatum.attributes.urls_queryable && <p className={classes.textOneLine}>Url trovate utilizzabili: {nodeDatum.attributes.urls_queryable}</p>}
                         </CardContent>
@@ -141,7 +141,7 @@ export default function TreeChart(props) {
                         name: "Partenza",
                         attributes: {
                             step: 0,
-                            keywords_found: null,
+                            keywords_found: [],
                             urls_queryable: [],
                             keywords: '',
                             parent: null,
