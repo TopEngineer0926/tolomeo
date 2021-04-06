@@ -90,7 +90,7 @@ const EvidenceChart = (props) => {
                             name: "Partenza",
                             attributes: {
                                 step: 0,
-                                keywords_found: null,
+                                keywords_found: [],
                                 urls_queryable: [],
                                 keywords: '',
                                 parent: null,
