@@ -28,7 +28,6 @@ const useStyles = makeStyles((theme) => ({
     root: {
         '& .MuiTextField-root': {
             margin: theme.spacing(1),
-            width: '25ch',
         },
     },
     formControl: {
@@ -47,6 +46,9 @@ const useStyles = makeStyles((theme) => ({
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'ellipsis'
+    },
+    paper: {
+        width: '80%'
     }
 }));
 
@@ -61,14 +63,15 @@ const renderForeignObjectNode = ({
     foreignObjectProps,
     handleClickPickUp,
     handleClickExpand,
+    handleClickCard,
     classes
 }) => {
- return   (
+    return (
         <g>
             <circle r={15}></circle>
             <foreignObject {...foreignObjectProps}>
                 <Card style={{ maxWidth: 345 }}>
-                    <CardActionArea>
+                    <CardActionArea onClick={(e) => handleClickCard(e, nodeDatum)}>
                         <CardContent>
                             <h2 className={classes.textOneLine}>{nodeDatum.name}</h2>
                             {<p className={classes.textOneLine}>Ciclo: {nodeDatum.attributes.step}</p>}
@@ -83,7 +86,7 @@ const renderForeignObjectNode = ({
                             </Grid>
                             <Grid item>
                                 <Button size="small" color="primary" onClick={(e) => handleClickPickUp(e, nodeDatum)}
-                                    style={{visibility: nodeDatum.attributes.urls_queryable && nodeDatum.attributes.urls_queryable.length > 0 ? 'visible' : 'hidden'}}
+                                    style={{ visibility: nodeDatum.attributes.urls_queryable && nodeDatum.attributes.urls_queryable.length > 0 ? 'visible' : 'hidden' }}
                                 >
                                     Riprendi da qui
                                 </Button>
@@ -114,6 +117,12 @@ export default function TreeChart(props) {
     const [parent, setParent] = useState('');
     const [step, setStep] = useState(0);
     const classes = useStyles();
+
+    const [openCardDialog, setOpenCardDialog] = useState(false);
+    const [cardName, setCardName] = useState('');
+    const [cardKeywordsFound, setCardKeywordsFound] = useState([]);
+    const [cardUrlsQueryable, setCardUrlsQueryable] = useState([]);
+    const [cardStep, setCardStep] = useState(0);
 
     useEffect(() => {
         setData(items)
@@ -148,7 +157,7 @@ export default function TreeChart(props) {
                             uuid: null
                         },
                         children: data.children && data.children.map(
-                            (d, i) =>(d.attributes.uuid === nodeData.attributes.uuid) ? {
+                            (d, i) => (d.attributes.uuid === nodeData.attributes.uuid) ? {
                                 name: nodeData.name,
                                 attributes: nodeData.attributes,
                                 children: response.data.data.items.map(
@@ -245,6 +254,19 @@ export default function TreeChart(props) {
 
         setOpenSnackbar(false);
     };
+
+    const handleClickCard = (event, nodeData) => {
+        setOpenCardDialog(true);
+        setCardName(nodeData.name);
+        setCardStep(nodeData.attributes.step);
+        setCardKeywordsFound(nodeData.attributes.keywords_found);
+        setCardUrlsQueryable(nodeData.attributes.urls_queryable);
+    }
+
+    const handleCloseCardDialog = () => {
+        setOpenCardDialog(false);
+    }
+
     if (null !== data) {
         return (
             <div>
@@ -254,7 +276,7 @@ export default function TreeChart(props) {
                         translate={translate}
                         nodeSize={nodeSize}
                         renderCustomNodeElement={(rd3tProps) =>
-                            renderForeignObjectNode({ ...rd3tProps, foreignObjectProps, handleClickPickUp, handleClickExpand, classes })
+                            renderForeignObjectNode({ ...rd3tProps, foreignObjectProps, handleClickPickUp, handleClickExpand, handleClickCard, classes })
                         }
                         orientation="vertical"
                     />
@@ -303,6 +325,63 @@ export default function TreeChart(props) {
                         </Button>
                         <Button onClick={handleStart} color="primary">
                             Avvia
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog className={classes.root} open={openCardDialog} onClose={handleCloseCardDialog} aria-labelledby="form-dialog-title" classes={{paper: classes.paper}}>
+                    <DialogTitle >Scraper</DialogTitle>
+                    <DialogContent>
+                        <Grid item container spacing={1} direction="column">
+                            <Grid item>
+                                <p>Url di partenza</p>
+                                <TextField
+                                    multiline
+                                    disabled={true}
+                                    value={cardName}
+                                    fullWidth
+                                    variant="outlined"
+                                />
+                            </Grid>
+                            <Grid item>
+                                <p>Ciclo</p>
+                                <TextField
+                                    disabled={true}
+                                    value={cardStep}
+                                    fullWidth
+                                    variant="outlined"
+                                />
+                            </Grid>
+                            <Grid item>
+                                <p>Parole chiave trovate</p>
+                                <TextField
+                                    rowsMax={10}
+                                    multiline
+                                    disabled={true}
+                                    value={cardKeywordsFound.map((val_k) => {
+                                        return val_k.replace(",", "") + "\n"
+                                    })}
+                                    fullWidth
+                                    variant="outlined"
+                                />
+                            </Grid>
+                            <Grid item>
+                                <p>Url trovate utilizzabili</p>
+                                <TextField
+                                    rowsMax={10}
+                                    multiline
+                                    disabled={true}
+                                    value={cardUrlsQueryable.map((val_u) => {
+                                        return val_u.replace(",", "") + "\n"
+                                    })}
+                                    fullWidth
+                                    variant="outlined"
+                                />
+                            </Grid>
+                        </Grid>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseCardDialog} color="primary">
+                            Annulla
                         </Button>
                     </DialogActions>
                 </Dialog>
