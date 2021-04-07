@@ -24,6 +24,8 @@ def scrape(url, keywords=[]):
         keywords_found = get_keywords_match(web_driver, keywords)
         web_driver.quit()
         urls_queryable = filter_category_links(category_links)
+        has_form = get_form_count(response)
+        has_input_password = get_password_input_count(response)
         return {
             "url": url,
             "title": title,
@@ -128,3 +130,19 @@ def get_keyword_match_by_text(driver, search):
     except Exception as e:
         logging.error(e)
     return element_list
+
+
+def get_form_count(driver):
+    form_tags = get_list_by_tag_name(driver, "form")
+    return len(form_tags) > 0
+
+
+def get_password_input_count(driver):
+    password_input = []
+    try:
+        lc = search.lower()
+        all_elements = driver.find_elements_by_xpath("//*[@type='password']")
+        password_input = [x.text for x in all_elements if len(x.text) > 0]
+    except Exception as e:
+        logging.error(e)
+    return len(password_input) > 0
