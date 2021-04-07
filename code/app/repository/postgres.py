@@ -243,7 +243,7 @@ class PostgresRepository(object):
     def get_all_evidences_for_export(self):
         cursor = self.connection.cursor()
         query = """
-        SELECT * FROM evidences
+        SELECT uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url, step, total_steps, created, has_form, has_input_password FROM evidences
         ORDER BY step, created
         """
         cursor.execute(query)
