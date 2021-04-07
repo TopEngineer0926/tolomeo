@@ -18,6 +18,10 @@ For python I suggest to download black and use in *code* folder:
 - run `pip install black` on a terminal (you must have it installed)
 - run `black {source_directory_or_file}`, eg `black code/`
 
+### ash Credentials
+The credentials are saved in the env.local file, but are hashed.
+To hash different credentials please change `code/hash_credentials.py`, run it in the backend container and copy the new credentials in .env.local and/or .env file
+
 
 ## Scan the found onion site
 Simply run `make scan onion_site=fakesite.onion` specifying the *onion_site* to be scan and you will get an export of vulnerabilities of the site in *scan_result.log* file.
