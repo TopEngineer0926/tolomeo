@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.15 (Debian 10.15-1.pgdg90+1)
--- Dumped by pg_dump version 10.15 (Debian 10.15-1.pgdg90+1)
+-- Dumped from database version 10.16 (Debian 10.16-1.pgdg90+1)
+-- Dumped by pg_dump version 10.16 (Debian 10.16-1.pgdg90+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -50,37 +50,19 @@ CREATE TABLE public.evidences (
     url character varying,
     step numeric,
     total_steps numeric,
-    created timestamp(0) with time zone
+    created timestamp(0) with time zone,
+    has_form boolean,
+    has_input_password boolean
 );
 
 
 ALTER TABLE public.evidences OWNER TO admin_dip;
 
 --
--- Name: utenti; Type: TABLE; Schema: public; Owner: admin_dip
---
-
-CREATE TABLE public.utenti (
-    uuid character varying NOT NULL,
-    email character varying NOT NULL
-);
-
-
-ALTER TABLE public.utenti OWNER TO admin_dip;
-
---
 -- Data for Name: evidences; Type: TABLE DATA; Schema: public; Owner: admin_dip
 --
 
-COPY public.evidences (uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url, step, total_steps, created) FROM stdin;
-\.
-
-
---
--- Data for Name: utenti; Type: TABLE DATA; Schema: public; Owner: admin_dip
---
-
-COPY public.utenti (uuid, email) FROM stdin;
+COPY public.evidences (uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url, step, total_steps, created, has_form, has_input_password) FROM stdin;
 \.
 
 

@@ -48,6 +48,8 @@ def investigate(urls_list, parent, keywords, step, total_steps):
                         "step",
                         "total_steps",
                         "created",
+                        "has_form",
+                        "has_input_password",
                     ]
                 )
                 write.writerows(evidences)

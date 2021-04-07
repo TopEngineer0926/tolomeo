@@ -243,52 +243,13 @@ class PostgresRepository(object):
     def get_all_evidences_for_export(self):
         cursor = self.connection.cursor()
         query = """
-        SELECT * FROM evidences
+        SELECT uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url, step, total_steps, created, has_form, has_input_password FROM evidences
         ORDER BY step, created
         """
         cursor.execute(query)
         rows = cursor.fetchall()
         cursor.close()
         return rows
-
-    def find_all_users(self, selector):
-        cursor = self.connection.cursor()
-        query = """
-        SELECT uuid, email FROM utenti WHERE email = '{}'
-        """.format(
-            selector["email"]
-        )
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        response = []
-        for row in rows:
-            response.append({"uuid": row[0], "email": row[1]})
-        cursor.close()
-        return response
-
-    def create_user(self, new_user):
-        cursor = self.connection.cursor()
-        query = """
-        INSERT INTO utenti (uuid, email) VALUES ('{}', '{}')
-        """.format(
-            new_user["uuid"], new_user["email"]
-        )
-        cursor.execute(query)
-        self.connection.commit()
-        cursor.close()
-        return new_user
-
-    def delete(self, selector):
-        cursor = self.connection.cursor()
-        query = """
-        DELETE FROM utenti WHERE email = '{}'
-        """.format(
-            selector["email"]
-        )
-        cursor.execute(query)
-        self.connection.commit()
-        cursor.close()
-        return cursor.rowcount
 
     def __get_children(self, uuid=None):
         if None == uuid:

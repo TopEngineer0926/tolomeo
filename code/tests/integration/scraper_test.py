@@ -11,7 +11,6 @@ import requests
 from app.repository import Repository
 from app.repository.postgres import PostgresRepository
 from app.scraper.detective import Detective
-from app.scraper.schema import UserSchema
 from app.scraper.service import Service
 
 logger = logging.getLogger()
@@ -58,6 +57,8 @@ def test_detective_return_none_if_url_already_scraped_and_was_only_one(caplog):
         "urls_found": [],
         "urls_queryable": [],
         "keywords_found": [],
+        "has_form": False,
+        "has_input_password": False,
     }
     repo_client.save_evidence(puppet_evidence)
     urls = ["https://www.facebookcorewwwi.onion/"]
@@ -65,28 +66,3 @@ def test_detective_return_none_if_url_already_scraped_and_was_only_one(caplog):
     evidence = detective.investigate(urls_list=urls, keywords=["drug", "porn"])
     repo_client.delete_evidence(puppet_uuid)
     assert True == evidence
-
-
-def test_service_creates_new_user():
-    user_repo = UserSchema().load({"email": "pippo@email.com"})
-    response = Service().create_user(user_repo)
-    assert "pippo@email.com" == response["email"]
-
-    users = Service().find_all_users("pippo@email.com")
-    assert len(users) > 0
-
-    deleted = Service().delete_user_for("pippo@email.com")
-    assert True == deleted
-
-
-def test_creates_postgres_user():
-    service = Service(repo_client=Repository(adapter=PostgresRepository))
-    user_repo = UserSchema().load({"email": "pippo@email.com"})
-    response = service.create_user(user_repo)
-    assert "pippo@email.com" == response["email"]
-
-    users = service.find_all_users("pippo@email.com")
-    assert len(users) > 0
-
-    deleted = service.delete_user_for("pippo@email.com")
-    assert True == deleted

@@ -119,5 +119,14 @@ def get_keywords_match(response, keywords):
             string=re.compile(keyword, re.IGNORECASE + re.MULTILINE + re.DOTALL)
         )
         if len(elems) > 0:
-            keywords_found.append({keyword: elems})
+            keywords_found.append({keyword: [sanitize_keyword(x) for x in elems]})
     return keywords_found
+
+
+def sanitize_keyword(body):
+    variable = body
+    if None == variable:
+        variable = "None"
+    if not isinstance(variable, str):
+        variable = json.dumps(variable)
+    return re.sub(r'["]+', "", variable)
