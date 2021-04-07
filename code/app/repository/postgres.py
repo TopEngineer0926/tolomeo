@@ -251,45 +251,6 @@ class PostgresRepository(object):
         cursor.close()
         return rows
 
-    def find_all_users(self, selector):
-        cursor = self.connection.cursor()
-        query = """
-        SELECT uuid, email FROM utenti WHERE email = '{}'
-        """.format(
-            selector["email"]
-        )
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        response = []
-        for row in rows:
-            response.append({"uuid": row[0], "email": row[1]})
-        cursor.close()
-        return response
-
-    def create_user(self, new_user):
-        cursor = self.connection.cursor()
-        query = """
-        INSERT INTO utenti (uuid, email) VALUES ('{}', '{}')
-        """.format(
-            new_user["uuid"], new_user["email"]
-        )
-        cursor.execute(query)
-        self.connection.commit()
-        cursor.close()
-        return new_user
-
-    def delete(self, selector):
-        cursor = self.connection.cursor()
-        query = """
-        DELETE FROM utenti WHERE email = '{}'
-        """.format(
-            selector["email"]
-        )
-        cursor.execute(query)
-        self.connection.commit()
-        cursor.close()
-        return cursor.rowcount
-
     def __get_children(self, uuid=None):
         if None == uuid:
             return []

@@ -33,21 +33,6 @@ class Service(object):
             "items": self.repo_client.get_evidences_map(uuid, limit, page),
         }
 
-    def find_all_users(self, user_email):
-        return self.repo_client.find_all_users({"email": user_email})
-
-    def create_user(self, new_user):
-        return self.repo_client.create_user(self.prepare_user(new_user))
-
-    def delete_user_for(self, user_email):
-        records_affected = self.repo_client.delete({"email": user_email})
-        return records_affected > 0
-
-    def prepare_user(self, new_user):
-        data = new_user.data
-        data["uuid"] = str(uuid.uuid4())
-        return data
-
     def delete_all_evidences(self):
         return self.repo_client.delete_all_evidences()
 

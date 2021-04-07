@@ -3,7 +3,6 @@ import celery.states as states
 import uuid
 
 from functools import wraps
-from app.scraper.schema import UserSchema
 from app.scraper.service import Service
 from app.services.authentication.auth import Auth
 from app.services.authentication.hmac import HmacAuth
@@ -71,35 +70,6 @@ def logout():
     return json_response({}, 405, "Not implemented")
 
 
-@app.route(PREFIX + "/users/<email>", methods=["GET"])
-def user(email):
-    return json_response(Service().find_all_users(email), 200, "User found")
-
-
-@app.route(PREFIX + "/users/<email>", methods=["DELETE"])
-def delete(email):
-    if Service().delete_user_for(email):
-        return json_response({}, 200, "Deleted seccessfully")
-    else:
-        return json_response({}, 404, "User not found")
-
-
-@app.route(PREFIX + "/users", methods=["POST"])
-def create():
-    try:
-        user_repo = UserSchema().load(json.loads(request.data))
-
-        if user_repo.errors:
-            return json_response(
-                {"error": user_repo.errors}, 422, "Unprocessable entity"
-            )
-
-        new_user = Service().create_user(user_repo)
-        return json_response(new_user, 200, "User created")
-    except Exception as error:
-        return json_response({"error": str(error)}, 500, "Internal Server Error")
-
-
 @app.route(PREFIX + "/evidences/telegram", methods=["POST"])
 @external_service_decorator
 def add_telegram_evidence():
@@ -117,6 +87,8 @@ def add_telegram_evidence():
         "urls_found": data["urls_found"],
         "urls_queryable": data["urls_queryable"],
         "keywords_found": data["keywords_found"],
+        "has_form": False,
+        "has_input_password": False,
     }
     return json_response(Service().save_telegram_evidence(evidence), 202, "Accepted")
 

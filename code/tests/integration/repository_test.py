@@ -11,7 +11,6 @@ import requests
 from app.repository import Repository
 from app.repository.postgres import PostgresRepository
 from app.scraper.detective import Detective
-from app.scraper.schema import UserSchema
 from app.scraper.service import Service
 
 logger = logging.getLogger()
@@ -43,6 +42,8 @@ def test_repo_get_map(caplog):
         "urls_found": [],
         "urls_queryable": [],
         "keywords_found": [],
+        "has_form": False,
+        "has_input_password": False,
     }
     repo_client.save_evidence(puppet_evidence)
 
@@ -58,6 +59,8 @@ def test_repo_get_map(caplog):
         "urls_found": [],
         "urls_queryable": [],
         "keywords_found": [],
+        "has_form": False,
+        "has_input_password": False,
     }
     repo_client.save_evidence(puppet_evidence)
 
@@ -73,6 +76,8 @@ def test_repo_get_map(caplog):
         "urls_found": [],
         "urls_queryable": [],
         "keywords_found": [],
+        "has_form": False,
+        "has_input_password": False,
     }
     repo_client.save_evidence(puppet_evidence)
     evidences_map = repo_client.get_evidences_map(None)
@@ -95,6 +100,8 @@ def test_limit_of_get_evidences(caplog):
         "urls_found": [],
         "urls_queryable": [],
         "keywords_found": [],
+        "has_form": False,
+        "has_input_password": False,
     }
     repo_client.save_evidence(puppet_evidence)
 
@@ -110,6 +117,8 @@ def test_limit_of_get_evidences(caplog):
         "urls_found": [],
         "urls_queryable": [],
         "keywords_found": [],
+        "has_form": False,
+        "has_input_password": False,
     }
     repo_client.save_evidence(puppet_evidence)
     evidences = repo_client.get_evidences(1)
