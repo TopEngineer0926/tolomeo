@@ -29,12 +29,16 @@ def scrape(url, keywords=[]):
         category_links = get_category_links(response)
         urls_queryable = filter_category_links(category_links)
         keywords_found = get_keywords_match(response, keywords)
+        has_form = get_form_count(response)
+        has_input_password = get_password_input_count(response)
         return {
             "url": url,
             "title": title,
             "urls_found": category_links,
             "urls_queryable": urls_queryable,
             "keywords_found": keywords_found,
+            "has_form": has_form,
+            "has_input_password": has_input_password,
         }
     except Exception as e:
         logging.error(str(e))
@@ -76,6 +80,20 @@ def get_category_links(response):
             name = "Non presente"
         category_links.update({name: a.get("href")})
     return category_links
+
+
+def get_form_count(response):
+    html = response.text
+    soup = BeautifulSoup(html, "html.parser")
+    form_tags = soup.find_all("form")
+    return len(form_tags) > 0
+
+
+def get_password_input_count(response):
+    html = response.text
+    soup = BeautifulSoup(html, "html.parser")
+    password_input = soup.find_all("input", attrs={"type": "password"})
+    return len(password_input) > 0
 
 
 def filter_category_links(links):
