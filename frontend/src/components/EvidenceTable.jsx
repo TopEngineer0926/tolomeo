@@ -15,6 +15,7 @@ import InputBase from '@material-ui/core/InputBase';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Button from '@material-ui/core/Button';
 
 const BootstrapInput = withStyles((theme) => ({
     root: {
@@ -118,6 +119,26 @@ const EvidenceTable = (props) => {
             );
     }, [page, limit, query, isOnlyKeywords]);
 
+    const handleClickExportCSV = () => {
+        let year = new Date().getFullYear();
+        let month = new Date().getMonth() + 1;
+        let date1 = new Date().getDate();
+        let date = year + '_' + month + '_' + date1;
+
+        AdminService.exportCSV()
+        .then(
+            ({ data }) => {
+                const downloadUrl = window.URL.createObjectURL(new Blob([data]));
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.setAttribute('download', date + '.csv');
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+            }
+        );
+    }
+
     return (
         <Grid container spacing={2}>
             <Grid item container direction="row-reverse" className={classes.selectMargin}>
@@ -155,6 +176,11 @@ const EvidenceTable = (props) => {
                                 control={<Checkbox checked={isOnlyKeywords} onChange={handleChangeIsOnlyKeywords} name="gilad" />}
                                 label="Solo risultati con parole chiave"
                             />
+                        </Grid>
+                        <Grid item>
+                            <Button variant="outlined" color="primary" onClick={handleClickExportCSV}>
+                                Esporta CSV
+                            </Button>
                         </Grid>
                     </Grid>
                     <Table aria-label="simple table">

@@ -23,6 +23,10 @@ class AdminService {
   getCrawl(data) {
     return axios.post(API_URL + 'crawl', data, { headers: authHeader() });
   }
+
+  exportCSV() {
+    return axios.get(API_URL + 'evidences/export', { headers: authHeader() ,responseType: 'blob'});
+  }
 }
 
 export default new AdminService();
