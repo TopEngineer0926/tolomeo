@@ -166,6 +166,8 @@ const EvidenceTable = (props) => {
                                 <TableCell>Url</TableCell>
                                 <TableCell>Numero Ciclo</TableCell>
                                 <TableCell>Totale Cicli</TableCell>
+                                <TableCell>Ha form</TableCell>
+                                <TableCell>Ha password</TableCell>
                                 <TableCell>Parole chiave cercate</TableCell>
                                 <TableCell>Parole chiave trovate</TableCell>
                                 <TableCell>Url trovate utilizzabili</TableCell>
@@ -182,6 +184,8 @@ const EvidenceTable = (props) => {
                                     <TableCell align="left">{row.url}</TableCell>
                                     <TableCell align="left">{row.step}</TableCell>
                                     <TableCell align="left">{row.total_steps}</TableCell>
+                                    <TableCell align="left">{row.has_form}</TableCell>
+                                    <TableCell align="left">{row.has_input_password}</TableCell>
                                     <TableCell align="left">{row.keywords}</TableCell>
                                     <TableCell align="justify" style={{ maxWidth: 250, overflow: 'hidden', maxHeight: 50, textOverflow: "ellipsis", maxLines: 3, whiteSpace: "nowrap" }}>{row.keywords_found}</TableCell>
                                     <TableCell align="justify" style={{ maxWidth: 250, overflow: 'hidden', maxHeight: 50, textOverflow: "ellipsis", maxLines: 3, whiteSpace: "nowrap" }} >

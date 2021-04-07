@@ -30,6 +30,8 @@ def scrape(url, keywords=[]):
             "urls_found": category_links,
             "urls_queryable": urls_queryable,
             "keywords_found": keywords_found,
+            "has_form": False,
+            "has_input_password": False,
         }
     except Exception as e:
         logging.error(str(e))

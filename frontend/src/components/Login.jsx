@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     height: '100vh',
   },
   image: {
-    backgroundImage: 'url(https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fwww.criminologia.it%2Fimages%2Flogo-criminologia-new-2.jpg&f=1&nofb=1)',
+    backgroundImage: 'url(/images/logo.jpeg)',
     backgroundRepeat: 'no-repeat',
     backgroundColor: 'white',
     backgroundSize: '50%',

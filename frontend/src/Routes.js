@@ -4,6 +4,7 @@ import EvidenceTable from './components/EvidenceTable'
 import EvidenceChart from './components/EvidenceChart';
 import Login from './components/Login';
 import NotFound from './components/NotFound';
+import Dashboard from './components/Dashboard';
 
 const Routes = () => {
     return (
@@ -18,7 +19,7 @@ const Routes = () => {
                 <Login></Login>
             </Route>
             <Route exact path="/">
-                Questo è l'ingresso dell'applicazione, effettua il login in alto a destra! {/*Define a home page */}
+                <Dashboard></Dashboard>
             </Route>
             <Route path="/not-found">
                 <NotFound />

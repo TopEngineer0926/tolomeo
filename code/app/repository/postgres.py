@@ -25,8 +25,8 @@ class PostgresRepository(object):
         cursor = self.connection.cursor()
         query = """
         INSERT INTO public.evidences
-        (uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url, step, total_steps, created)
-        VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', now());
+        (uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url, step, total_steps, has_form, has_input_password, created)
+        VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', now());
         """.format(
             evidence["uuid"],
             evidence["source"],
@@ -39,6 +39,8 @@ class PostgresRepository(object):
             evidence["url"],
             evidence["step"],
             evidence["total_steps"],
+            evidence["has_form"],
+            evidence["has_input_password"],
         )
         cursor.execute(query)
         self.connection.commit()
@@ -111,7 +113,7 @@ class PostgresRepository(object):
         limit_query = "LIMIT " + str(limits["limit"])
         offset_query = "OFFSET " + str(limits["offset"])
         query = """
-        SELECT uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url, step, total_steps FROM evidences
+        SELECT uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url, step, total_steps, has_form, has_input_password FROM evidences
         {}
         ORDER BY step, created
         {} {}
@@ -135,6 +137,8 @@ class PostgresRepository(object):
                     "url": row[8],
                     "step": str(row[9]),
                     "total_steps": str(row[10]),
+                    "has_form": row[11],
+                    "has_input_password": row[12],
                 }
             )
         cursor.close()
