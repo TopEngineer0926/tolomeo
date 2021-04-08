@@ -177,9 +177,9 @@ export default function TreeChart(props) {
                                                     name: child.url,
                                                     attributes: {
                                                         step: child.step,
-                                                        keywords_found: child.keywords_found,
+                                                        keywords_found: child.keywords_found ? JSON.parse(child.keywords_found) : [],
                                                         keywords: child.keywords,
-                                                        urls_queryable: child.urls_queryable,
+                                                        urls_queryable: child.urls_queryable ? JSON.parse(child.urls_queryable) : [],
                                                         parent: child.parent,
                                                         uuid: child.uuid
                                                     }
