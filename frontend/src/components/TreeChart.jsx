@@ -75,8 +75,8 @@ const renderForeignObjectNode = ({
                         <CardContent>
                             <h2 className={classes.textOneLine}>{nodeDatum.name}</h2>
                             {<p className={classes.textOneLine}>Ciclo: {nodeDatum.attributes.step}</p>}
-                            {nodeDatum.attributes.keywords_found && <p className={classes.textOneLine}>Parole chiave trovate: {nodeDatum.attributes.keywords_found}</p>}
-                            {nodeDatum.attributes.urls_queryable && <p className={classes.textOneLine}>Url trovate utilizzabili: {nodeDatum.attributes.urls_queryable}</p>}
+                            {nodeDatum.attributes.keywords_found && <p className={classes.textOneLine}>Parole chiave trovate: {nodeDatum.attributes.keywords_found.toString()}</p>}
+                            {nodeDatum.attributes.urls_queryable && <p className={classes.textOneLine}>Url trovate utilizzabili: {nodeDatum.attributes.urls_queryable.toString()}</p>}
                         </CardContent>
                     </CardActionArea>
                     <CardActions>
