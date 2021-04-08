@@ -200,7 +200,7 @@ const EvidenceTable = (props) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {evidences.map((row) => (
+                            {evidences.length > 0 && evidences.map((row) => (
                                 <TableRow key={`${row.uuid}`}>
                                     <TableCell component="th" scope="row">
                                         {row.uuid}
