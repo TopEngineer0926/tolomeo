@@ -357,9 +357,10 @@ export default function TreeChart(props) {
                                     rowsMax={10}
                                     multiline
                                     disabled={true}
-                                    value={cardKeywordsFound.length > 0 && cardKeywordsFound.map((val_k) => {
+                                    value={cardKeywordsFound.length > 0 ? cardKeywordsFound.map((val_k) => {
                                         return val_k.replace(",", "") + "\n"
-                                    })}
+                                    }) : ''
+                                    }
                                     fullWidth
                                     variant="outlined"
                                 />
@@ -370,9 +371,10 @@ export default function TreeChart(props) {
                                     rowsMax={10}
                                     multiline
                                     disabled={true}
-                                    value={cardUrlsQueryable.length > 0 && cardUrlsQueryable.map((val_u) => {
+                                    value={cardUrlsQueryable.length > 0 ? cardUrlsQueryable.map((val_u) => {
                                         return val_u.replace(",", "") + "\n"
-                                    })}
+                                    }) : ''
+                                    }
                                     fullWidth
                                     variant="outlined"
                                 />
