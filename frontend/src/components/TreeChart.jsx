@@ -133,9 +133,15 @@ export default function TreeChart(props) {
         setKeywords(nodeData.attributes.keywords + "");
         setCycles(0);
         setStep(nodeData.attributes.step);
-        setParent(nodeData.attributes.parent);
+        setParent(nodeData.attributes.uuid);
         setOpen(true);
     };
+
+    const handleKeywords = (keywords) => {
+        return keywords.map((keyword) => {
+            return Object.values(keyword)
+        })
+    }
 
     const handleClickExpand = (event, nodeData) => {
         if (nodeData.attributes.uuid == null)
@@ -165,7 +171,7 @@ export default function TreeChart(props) {
                                         return {
                                             name: item.url,
                                             attributes: {
-                                                keywords_found: item.keywords_found,
+                                                keywords_found: handleKeywords(item.keywords_found),
                                                 keywords: item.keywords,
                                                 step: item.step,
                                                 urls_queryable: item.urls_queryable,
@@ -177,9 +183,9 @@ export default function TreeChart(props) {
                                                     name: child.url,
                                                     attributes: {
                                                         step: child.step,
-                                                        keywords_found: child.keywords_found ? JSON.parse(child.keywords_found) : [],
+                                                        keywords_found: handleKeywords(child.keywords_found),
                                                         keywords: child.keywords,
-                                                        urls_queryable: child.urls_queryable ? JSON.parse(child.urls_queryable) : [],
+                                                        urls_queryable: child.urls_queryable,
                                                         parent: child.parent,
                                                         uuid: child.uuid
                                                     }
@@ -358,7 +364,7 @@ export default function TreeChart(props) {
                                     multiline
                                     disabled={true}
                                     value={cardKeywordsFound.length > 0 ? cardKeywordsFound.map((val_k) => {
-                                        return val_k.replace(",", "") + "\n"
+                                        return val_k.join("\n")
                                     }) : ''
                                     }
                                     fullWidth

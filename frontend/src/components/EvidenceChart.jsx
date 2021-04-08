@@ -77,6 +77,12 @@ const EvidenceChart = (props) => {
         setLimit(event.target.value);
     };
 
+    const handleKeywords = (keywords) => {
+        return keywords.map((keyword) => {
+            return Object.values(keyword)
+        })
+    }
+
     useEffect(() => {
         AdminService.getCharts(dataList[limit], page)
             .then(
@@ -101,7 +107,7 @@ const EvidenceChart = (props) => {
                                     return {
                                         name: item.url,
                                         attributes: {
-                                            keywords_found: item.keywords_found,
+                                            keywords_found: handleKeywords(item.keywords_found),
                                             keywords: item.keywords,
                                             step: item.step,
                                             urls_queryable: item.urls_queryable,
@@ -113,9 +119,9 @@ const EvidenceChart = (props) => {
                                                 name: child.url,
                                                 attributes: {
                                                     step: child.step,
-                                                    keywords_found: child.keywords_found ? JSON.parse(child.keywords_found) : [],
+                                                    keywords_found: handleKeywords(child.keywords_found),
                                                     keywords: child.keywords,
-                                                    urls_queryable: child.urls_queryable ? JSON.parse(child.urls_queryable) : [],
+                                                    urls_queryable: child.urls_queryable,
                                                     parent: child.parent,
                                                     uuid: child.uuid
                                                 }
