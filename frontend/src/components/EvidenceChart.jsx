@@ -104,7 +104,7 @@ const EvidenceChart = (props) => {
                                             keywords_found: JSON.parse(item.keywords_found),
                                             keywords: item.keywords,
                                             step: item.step,
-                                            urls_queryable: item.urls_queryable,
+                                            urls_queryable: JSON.parse(item.urls_queryable),
                                             parent: item.parent,
                                             uuid: item.uuid
                                         },
@@ -115,7 +115,7 @@ const EvidenceChart = (props) => {
                                                     step: child.step,
                                                     keywords_found: JSON.parse(child.keywords_found),
                                                     keywords: child.keywords,
-                                                    urls_queryable: child.urls_queryable,
+                                                    urls_queryable: JSON.parse(child.urls_queryable),
                                                     parent: child.parent,
                                                     uuid: child.uuid
                                                 }
