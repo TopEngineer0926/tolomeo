@@ -261,7 +261,8 @@ class PostgresRepository(object):
             e.uuid,
             e.step as start_step,
             e.url,
-            e.keywords_found
+            e.keywords_found,
+            e.urls_queryable
         from
             evidences e
         where e.parent = '{}'
@@ -277,7 +278,8 @@ class PostgresRepository(object):
                     "uuid": row[0],
                     "step": str(row[1]),
                     "url": row[2],
-                    "keywords_found": row[3],
+                    "keywords_found": json.loads(row[3]),
+                    "urls_queryable": json.loads(row[4]),
                     "children": [],
                 }
             )
