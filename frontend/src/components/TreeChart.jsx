@@ -75,8 +75,8 @@ const renderForeignObjectNode = ({
                         <CardContent>
                             <h2 className={classes.textOneLine}>{nodeDatum.name}</h2>
                             {<p className={classes.textOneLine}>Ciclo: {nodeDatum.attributes.step}</p>}
-                            {nodeDatum.attributes.keywords_found && <p className={classes.textOneLine}>Parole chiave trovate: {nodeDatum.attributes.keywords_found.toString()}</p>}
-                            {nodeDatum.attributes.urls_queryable && <p className={classes.textOneLine}>Url trovate utilizzabili: {nodeDatum.attributes.urls_queryable.toString()}</p>}
+                            {nodeDatum.attributes.keywords_found && <p className={classes.textOneLine}>Parole chiave trovate: {nodeDatum.attributes.keywords_found}</p>}
+                            {nodeDatum.attributes.urls_queryable && <p className={classes.textOneLine}>Url trovate utilizzabili: {nodeDatum.attributes.urls_queryable}</p>}
                         </CardContent>
                     </CardActionArea>
                     <CardActions>
@@ -165,10 +165,10 @@ export default function TreeChart(props) {
                                         return {
                                             name: item.url,
                                             attributes: {
-                                                keywords_found: JSON.parse(item.keywords_found),
+                                                keywords_found: item.keywords_found,
                                                 keywords: item.keywords,
                                                 step: item.step,
-                                                urls_queryable: JSON.parse(item.urls_queryable),
+                                                urls_queryable: item.urls_queryable,
                                                 parent: item.parent,
                                                 uuid: item.uuid
                                             },
@@ -177,9 +177,9 @@ export default function TreeChart(props) {
                                                     name: child.url,
                                                     attributes: {
                                                         step: child.step,
-                                                        keywords_found: JSON.parse(child.keywords_found),
+                                                        keywords_found: child.keywords_found,
                                                         keywords: child.keywords,
-                                                        urls_queryable: JSON.parse(child.urls_queryable),
+                                                        urls_queryable: child.urls_queryable,
                                                         parent: child.parent,
                                                         uuid: child.uuid
                                                     }
