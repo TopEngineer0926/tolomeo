@@ -210,8 +210,8 @@ const EvidenceTable = (props) => {
                                     <TableCell align="left">{row.url}</TableCell>
                                     <TableCell align="left">{row.step}</TableCell>
                                     <TableCell align="left">{row.total_steps}</TableCell>
-                                    <TableCell align="left">{row.has_form}</TableCell>
-                                    <TableCell align="left">{row.has_input_password}</TableCell>
+                                    <TableCell align="left">{row.has_form != null ? row.has_form.toString() : ''}</TableCell>
+                                    <TableCell align="left">{row.has_input_password != null ? row.has_input_password.toString() : ''}</TableCell>
                                     <TableCell align="left">{row.keywords}</TableCell>
                                     <TableCell align="justify" style={{ maxWidth: 250, overflow: 'hidden', maxHeight: 50, textOverflow: "ellipsis", maxLines: 3, whiteSpace: "nowrap" }}>{row.keywords_found}</TableCell>
                                     <TableCell align="justify" style={{ maxWidth: 250, overflow: 'hidden', maxHeight: 50, textOverflow: "ellipsis", maxLines: 3, whiteSpace: "nowrap" }} >
