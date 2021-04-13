@@ -115,7 +115,7 @@ class PostgresRepository(object):
         query = """
         SELECT uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url, step, total_steps, has_form, has_input_password FROM evidences
         {}
-        ORDER BY step, created
+        ORDER BY created
         {} {}
         """.format(
             where, limit_query, offset_query
@@ -244,7 +244,7 @@ class PostgresRepository(object):
         cursor = self.connection.cursor()
         query = """
         SELECT uuid, source_type, parent, keywords, keywords_found, urls_found, urls_queryable, title, url, step, total_steps, created, has_form, has_input_password FROM evidences
-        ORDER BY step, created
+        ORDER BY created
         """
         cursor.execute(query)
         rows = cursor.fetchall()
