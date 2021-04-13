@@ -173,7 +173,7 @@ class PostgresRepository(object):
     def get_evidences_map(self, uuid=None, limit=10, page=1):
         where = ""
         if uuid:
-            where = "where e.parent = '{}'".format(uuid.replace("'", ""))
+            where = "where e.uuid = '{}'".format(uuid.replace("'", ""))
         else:
             where = "where e.step = 1"
 
@@ -262,7 +262,9 @@ class PostgresRepository(object):
             e.step as start_step,
             e.url,
             e.keywords_found,
-            e.urls_queryable
+            e.urls_queryable,
+            e.keywords,
+            e.parent
         from
             evidences e
         where e.parent = '{}'
@@ -280,6 +282,8 @@ class PostgresRepository(object):
                     "url": row[2],
                     "keywords_found": json.loads(row[3]),
                     "urls_queryable": json.loads(row[4]),
+                    "keywords": row[5],
+                    "parent": row[6],
                     "children": [],
                 }
             )
