@@ -173,7 +173,7 @@ class PostgresRepository(object):
     def get_evidences_map(self, uuid=None, limit=10, page=1):
         where = ""
         if uuid:
-            where = "where e.uuid = '{}'".format(uuid.replace("'", ""))
+            where = "where e.parent = '{}'".format(uuid.replace("'", ""))
         else:
             where = "where e.step = 1"
 
