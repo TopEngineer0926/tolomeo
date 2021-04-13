@@ -115,6 +115,8 @@ def get_keywords_match(response, keywords):
     soup = BeautifulSoup(html, "html.parser")
     keywords_found = []
     for keyword in keywords:
+        if not keyword:
+            continue
         elems = soup.find_all(
             string=re.compile(keyword, re.IGNORECASE + re.MULTILINE + re.DOTALL)
         )

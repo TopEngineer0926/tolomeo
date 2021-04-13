@@ -120,7 +120,7 @@ def crawl():
         if None == data["parent"]:
             if os.path.exists(os.environ.get("EXPORT_PATH")):
                 os.remove(os.environ.get("EXPORT_PATH"))
-            Service().delete_all_evidences()
+           # Service().delete_all_evidences()
 
         task = celery.send_task(
             "tasks.investigate",
