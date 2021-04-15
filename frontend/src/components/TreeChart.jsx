@@ -74,7 +74,7 @@ const renderForeignObjectNode = ({
                     <CardActionArea onClick={(e) => handleClickCard(e, nodeDatum)}>
                         <CardContent>
                             <h2 className={classes.textOneLine}>{nodeDatum.name}</h2>
-                            {<p className={classes.textOneLine}>Ciclo: {nodeDatum.attributes.step}</p>}
+                            {nodeDatum.attributes.step && <p className={classes.textOneLine}>Ciclo: {nodeDatum.attributes.step}</p>}
                             {nodeDatum.attributes.keywords_found && <p className={classes.textOneLine}>Parole chiave trovate: {nodeDatum.attributes.keywords_found}</p>}
                             {nodeDatum.attributes.urls_queryable && <p className={classes.textOneLine}>Url trovate utilizzabili: {nodeDatum.attributes.urls_queryable}</p>}
                         </CardContent>
@@ -152,52 +152,49 @@ export default function TreeChart(props) {
                 if (response.data.status_code !== 200) {
                     console.error(response.data.message);
                 } else {
-                    let response_data = {
-                        name: "Partenza",
-                        attributes: {
-                            step: 0,
-                            keywords_found: [],
-                            urls_queryable: [],
-                            keywords: '',
-                            parent: null,
-                            uuid: null
-                        },
-                        children: data.children && data.children.map(
-                            (d, i) => (d.attributes.uuid === nodeData.attributes.uuid) ? {
-                                name: nodeData.name,
-                                attributes: nodeData.attributes,
-                                children: response.data.data.items.map(
-                                    item => {
+                    let selectedNode = nodeData.children ? {
+                        name: nodeData.name,
+                        attributes: nodeData.attributes,
+                        children: nodeData.children
+                    } : {
+                        name: nodeData.name,
+                        attributes: nodeData.attributes
+                    };
+                    let changeNode = {
+                        name: nodeData.name,
+                        attributes: nodeData.attributes,
+                        children: response.data.data.items[0].children.map(
+                            item => {
+                                return {
+                                    name: item.url,
+                                    attributes: {
+                                        keywords_found: handleKeywords(item.keywords_found),
+                                        keywords: item.keywords,
+                                        step: item.step,
+                                        urls_queryable: item.urls_queryable,
+                                        parent: item.parent,
+                                        uuid: item.uuid
+                                    },
+                                    children: item.children.map(child => {
                                         return {
-                                            name: item.url,
+                                            name: child.url,
                                             attributes: {
-                                                keywords_found: handleKeywords(item.keywords_found),
-                                                keywords: item.keywords,
-                                                step: item.step,
-                                                urls_queryable: item.urls_queryable,
-                                                parent: item.parent,
-                                                uuid: item.uuid
-                                            },
-                                            children: item.children.map(child => {
-                                                return {
-                                                    name: child.url,
-                                                    attributes: {
-                                                        step: child.step,
-                                                        keywords_found: handleKeywords(child.keywords_found),
-                                                        keywords: child.keywords,
-                                                        urls_queryable: child.urls_queryable,
-                                                        parent: child.parent,
-                                                        uuid: child.uuid
-                                                    }
-                                                }
-                                            })
+                                                step: child.step,
+                                                keywords_found: handleKeywords(child.keywords_found),
+                                                keywords: child.keywords,
+                                                urls_queryable: child.urls_queryable,
+                                                parent: child.parent,
+                                                uuid: child.uuid
+                                            }
                                         }
-                                    }
-                                )
-                            } : d
+                                    })
+                                }
+                            }
                         )
-                    }
-                    setData(response_data);
+                    };
+                    let response_data_string = JSON.stringify(data).replace(JSON.stringify(selectedNode), JSON.stringify(changeNode));
+                    let response_data_array = JSON.parse(response_data_string);
+                    setData(response_data_array);
                 }
             }
         )
